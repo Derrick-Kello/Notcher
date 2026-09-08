@@ -141,32 +141,27 @@ final class SystemMediaProvider: NowPlayingProvider {
             return
         }
         
-        // If both are running, poll each independently in parallel
-        Task.detached(priority: .userInitiated) { [weak self] in
-            async let sCheck = AppleScriptHelper.execute("tell application \"Spotify\" to get (player state is playing)")
-            async let mCheck = AppleScriptHelper.execute("tell application \"Music\" to get (player state is playing)")
+        // If both are running, check which one is actively playing
+        Task { [weak self] in
+            let sPlaying = (try? await AppleScriptHelper.execute("tell application \"Spotify\" to get (player state is playing)"))?.booleanValue ?? false
+            let mPlaying = (try? await AppleScriptHelper.execute("tell application \"Music\" to get (player state is playing)"))?.booleanValue ?? false
             
-            let sPlaying = (try? await sCheck)?.booleanValue ?? false
-            let mPlaying = (try? await mCheck)?.booleanValue ?? false
-            
-            await MainActor.run {
-                guard let self = self else { return }
-                if sPlaying {
-                    self.fetchSpotifyDetails()
-                } else if mPlaying {
-                    self.fetchMusicDetails()
-                } else if self.activeSource == .spotify {
-                    self.fetchSpotifyDetails()
-                } else {
-                    self.fetchMusicDetails()
-                }
+            guard let self = self else { return }
+            if sPlaying {
+                self.fetchSpotifyDetails()
+            } else if mPlaying {
+                self.fetchMusicDetails()
+            } else if self.activeSource == .spotify {
+                self.fetchSpotifyDetails()
+            } else {
+                self.fetchMusicDetails()
             }
         }
     }
     
     func fetchMusicDetails() {
         fetchTask?.cancel()
-        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
+        fetchTask = Task { [weak self] in
             let script = """
             tell application "Music"
                 try
@@ -249,7 +244,7 @@ final class SystemMediaProvider: NowPlayingProvider {
     
     func fetchSpotifyDetails() {
         fetchTask?.cancel()
-        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
+        fetchTask = Task { [weak self] in
             let script = """
             tell application "Spotify"
                 try
@@ -354,7 +349,7 @@ final class SystemMediaProvider: NowPlayingProvider {
         guard !title.isEmpty else { return }
         
         artworkTask?.cancel()
-        artworkTask = Task.detached(priority: .userInitiated) { [weak self] in
+        artworkTask = Task { [weak self] in
             let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression).trimmingCharacters(in: .whitespacesAndNewlines)
             let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression).trimmingCharacters(in: .whitespacesAndNewlines)
             let query = "\(cleanTitle) \(cleanArtist)".folding(options: .diacriticInsensitive, locale: .current)
@@ -389,7 +384,7 @@ final class SystemMediaProvider: NowPlayingProvider {
         guard !title.isEmpty else { return }
         
         lyricsTask?.cancel()
-        lyricsTask = Task.detached(priority: .userInitiated) { [weak self] in
+        lyricsTask = Task { [weak self] in
             await MainActor.run {
                 self?.isFetchingLyrics = true
                 self?.currentLyrics = ""

@@ -34,25 +34,33 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
             isExpanded = false
         }
         
+        let rect: NSRect
         if isExpanded {
-            let expandedRect = NSRect(
+            rect = NSRect(
                 x: (bounds.width - DisplayGeometry.openNotchSize.width) / 2.0,
                 y: bounds.height - DisplayGeometry.openNotchSize.height,
                 width: DisplayGeometry.openNotchSize.width,
                 height: DisplayGeometry.openNotchSize.height
             )
-            return expandedRect.contains(point) ? super.hitTest(point) : nil
         } else {
-            let width = display.hasNotch ? display.physicalNotchWidth : 160
+            let mediaProvider = SystemMediaProvider.shared
+            let hasActiveMedia = mediaProvider.isAvailable && mediaProvider.currentItem != nil
+            let width: CGFloat
+            if display.hasNotch {
+                width = hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
+            } else {
+                width = hasActiveMedia ? 260 : 160
+            }
             let height = display.physicalNotchHeight
-            let closedRect = NSRect(
+            rect = NSRect(
                 x: (bounds.width - width) / 2.0,
                 y: bounds.height - height,
                 width: width,
                 height: height
             )
-            return closedRect.contains(point) ? super.hitTest(point) : nil
         }
+        
+        return rect.contains(point) ? super.hitTest(point) : nil
     }
 }
 

@@ -12,6 +12,7 @@ struct NotchRootView: View {
     
     private var settings: SettingsModel { AppEnvironment.shared.settings }
     private var configuration: NotchConfiguration { settings.configuration }
+    @State private var mediaProvider = SystemMediaProvider.shared
     
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false
@@ -27,6 +28,10 @@ struct NotchRootView: View {
         default:
             return false
         }
+    }
+    
+    private var hasActiveMedia: Bool {
+        mediaProvider.isAvailable && mediaProvider.currentItem != nil
     }
     
     private var topCornerRadius: CGFloat {
@@ -48,15 +53,18 @@ struct NotchRootView: View {
         if isExpanded {
             return DisplayGeometry.openNotchSize.width
         } else {
-            // Strictly the physical notch width — nothing wider than the notch
-            return display.hasNotch ? display.physicalNotchWidth : 160
+            if display.hasNotch {
+                return hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
+            } else {
+                return hasActiveMedia ? 260 : 160
+            }
         }
     }
     
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
-                let mainLayout = notchContent
+                notchContent
                     .frame(
                         width: currentNotchWidth,
                         height: isExpanded ? DisplayGeometry.openNotchSize.height : display.physicalNotchHeight,
@@ -75,13 +83,11 @@ struct NotchRootView: View {
                         radius: isExpanded ? 6 : 4
                     )
                     .contentShape(currentNotchShape)
-                
-                mainLayout
-                    .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
-                    .animation(animationSpring, value: currentNotchWidth)
                     .onHover { hovering in
                         handleHover(hovering)
                     }
+                    .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
+                    .animation(animationSpring, value: currentNotchWidth)
             }
         }
         .frame(maxWidth: DisplayGeometry.windowSize.width, maxHeight: DisplayGeometry.windowSize.height, alignment: .top)
@@ -142,7 +148,7 @@ struct NotchRootView: View {
             }
             
             hoverTask = Task {
-                try? await Task.sleep(nanoseconds: 150_000_000)
+                try? await Task.sleep(nanoseconds: 180_000_000)
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
