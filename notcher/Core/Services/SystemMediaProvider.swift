@@ -80,63 +80,80 @@ final class SystemMediaProvider: NowPlayingProvider {
     
     private func startPolling() {
         pollTimer?.invalidate()
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.refreshActiveMedia()
+        let timer = Timer(timeInterval: 1.5, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.refreshActiveMedia()
+            }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        self.pollTimer = timer
     }
     
     func refreshActiveMedia() {
-        Task {
+        let runningApps = NSWorkspace.shared.runningApplications
+        let isMusicRunning = runningApps.contains { $0.bundleIdentifier == "com.apple.Music" }
+        let isSpotifyRunning = runningApps.contains { $0.bundleIdentifier == "com.spotify.client" }
+        
+        if !isMusicRunning && !isSpotifyRunning {
+            if currentItem != nil {
+                currentItem = nil
+                isPlaying = false
+                artworkImage = nil
+                currentLyrics = ""
+                syncedLyrics = []
+                lastTrackKey = ""
+            }
+            return
+        }
+        
+        if isSpotifyRunning && !isMusicRunning {
+            fetchSpotifyDetails()
+            return
+        }
+        
+        if isMusicRunning && !isSpotifyRunning {
+            fetchMusicDetails()
+            return
+        }
+        
+        // If both are running, check which one is actively playing
+        Task.detached(priority: .userInitiated) { [weak self] in
             let script = """
-            set mPlaying to false
             set sPlaying to false
-            set mRunning to false
-            set sRunning to false
-            
-            if application "Music" is running then
-                set mRunning to true
-                tell application "Music"
-                    try
-                        set mPlaying to (player state is playing)
-                    end try
-                end tell
-            end if
-            
-            if application "Spotify" is running then
-                set sRunning to true
-                tell application "Spotify"
-                    try
-                        set sPlaying to (player state is playing)
-                    end try
-                end tell
-            end if
-            
-            return {mRunning, mPlaying, sRunning, sPlaying}
+            set mPlaying to false
+            tell application "Spotify"
+                try
+                    set sPlaying to (player state is playing)
+                end try
+            end tell
+            tell application "Music"
+                try
+                    set mPlaying to (player state is playing)
+                end try
+            end tell
+            return {sPlaying, mPlaying}
             """
             
-            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
-            let mRunning = desc.atIndex(1)?.booleanValue ?? false
-            let mPlaying = desc.atIndex(2)?.booleanValue ?? false
-            let sRunning = desc.atIndex(3)?.booleanValue ?? false
-            let sPlaying = desc.atIndex(4)?.booleanValue ?? false
-            
-            if sPlaying {
-                self.activeSource = .spotify
-                self.fetchSpotifyDetails()
-            } else if mPlaying {
-                self.activeSource = .music
-                self.fetchMusicDetails()
-            } else if sRunning && self.activeSource == .spotify {
-                self.fetchSpotifyDetails()
-            } else if mRunning && self.activeSource == .music {
-                self.fetchMusicDetails()
-            } else if sRunning {
-                self.activeSource = .spotify
-                self.fetchSpotifyDetails()
-            } else if mRunning {
-                self.activeSource = .music
-                self.fetchMusicDetails()
+            if let desc = try? await AppleScriptHelper.execute(script) {
+                let sPlaying = desc.atIndex(1)?.booleanValue ?? false
+                let mPlaying = desc.atIndex(2)?.booleanValue ?? false
+                
+                await MainActor.run {
+                    guard let self = self else { return }
+                    if sPlaying {
+                        self.fetchSpotifyDetails()
+                    } else if mPlaying {
+                        self.fetchMusicDetails()
+                    } else if self.activeSource == .spotify {
+                        self.fetchSpotifyDetails()
+                    } else {
+                        self.fetchMusicDetails()
+                    }
+                }
+            } else {
+                await MainActor.run {
+                    self?.fetchSpotifyDetails()
+                }
             }
         }
     }
@@ -153,9 +170,14 @@ final class SystemMediaProvider: NowPlayingProvider {
                     set tAlbum to album of current track
                     set tPos to player position
                     set tDur to duration of current track
-                    return {pState, tName, tArtist, tAlbum, tPos, tDur}
+                    try
+                        set artData to data of artwork 1 of current track
+                    on error
+                        set artData to ""
+                    end try
+                    return {pState, tName, tArtist, tAlbum, tPos, tDur, artData}
                 on error
-                    return {false, "", "", "", 0, 0}
+                    return {false, "", "", "", 0, 0, ""}
                 end try
             end tell
             """
@@ -169,13 +191,28 @@ final class SystemMediaProvider: NowPlayingProvider {
             let album = desc.atIndex(4)?.stringValue ?? ""
             let position = desc.atIndex(5)?.doubleValue ?? 0
             let duration = desc.atIndex(6)?.doubleValue ?? 0
+            let rawArtData = desc.atIndex(7)?.data
             
-            guard !title.isEmpty else { return }
+            guard !title.isEmpty else {
+                await MainActor.run {
+                    self?.currentItem = nil
+                    self?.isPlaying = false
+                }
+                return
+            }
+            
+            var directImage: NSImage? = nil
+            if let data = rawArtData, !data.isEmpty {
+                directImage = NSImage(data: data)
+            }
             
             await MainActor.run {
                 guard let self = self else { return }
                 self.activeSource = .music
                 self.isPlaying = isPlaying
+                if let img = directImage {
+                    self.artworkImage = img
+                }
                 self.currentItem = NowPlayingItem(
                     title: title,
                     artist: artist,
@@ -183,16 +220,18 @@ final class SystemMediaProvider: NowPlayingProvider {
                     duration: duration,
                     elapsedTime: position,
                     isPlaying: isPlaying,
-                    artworkData: self.currentItem?.artworkData
+                    artworkData: rawArtData ?? self.currentItem?.artworkData
                 )
                 self.updatePlaybackTicker()
                 
                 let key = "Music_\(title)_\(artist)"
                 if key != self.lastTrackKey {
                     self.lastTrackKey = key
-                    self.artworkImage = nil
+                    if directImage == nil {
+                        self.artworkImage = nil
+                        self.fetchOnlineArtwork(title: title, artist: artist)
+                    }
                     self.fetchLyrics(title: title, artist: artist, source: .music)
-                    self.fetchOnlineArtwork(title: title, artist: artist)
                 }
             }
         }
@@ -229,12 +268,18 @@ final class SystemMediaProvider: NowPlayingProvider {
             let duration = desc.atIndex(6)?.doubleValue ?? 0
             let artUrlString = desc.atIndex(7)?.stringValue ?? ""
             
-            guard !title.isEmpty else { return }
+            guard !title.isEmpty else {
+                await MainActor.run {
+                    self?.currentItem = nil
+                    self?.isPlaying = false
+                }
+                return
+            }
             
-            var spotifyImage: NSImage? = nil
+            var artData: Data? = nil
             if let url = URL(string: artUrlString), !artUrlString.isEmpty {
                 if let (data, _) = try? await URLSession.shared.data(from: url) {
-                    spotifyImage = NSImage(data: data)
+                    artData = data
                 }
             }
             
@@ -242,7 +287,7 @@ final class SystemMediaProvider: NowPlayingProvider {
                 guard let self = self else { return }
                 self.activeSource = .spotify
                 self.isPlaying = isPlaying
-                if let img = spotifyImage {
+                if let data = artData, let img = NSImage(data: data) {
                     self.artworkImage = img
                 }
                 self.currentItem = NowPlayingItem(
@@ -252,14 +297,14 @@ final class SystemMediaProvider: NowPlayingProvider {
                     duration: duration,
                     elapsedTime: position,
                     isPlaying: isPlaying,
-                    artworkData: self.currentItem?.artworkData
+                    artworkData: artData ?? self.currentItem?.artworkData
                 )
                 self.updatePlaybackTicker()
                 
                 let key = "Spotify_\(title)_\(artist)"
                 if key != self.lastTrackKey {
                     self.lastTrackKey = key
-                    if spotifyImage == nil {
+                    if artData == nil {
                         self.artworkImage = nil
                         self.fetchOnlineArtwork(title: title, artist: artist)
                     }
@@ -296,14 +341,14 @@ final class SystemMediaProvider: NowPlayingProvider {
         
         artworkTask?.cancel()
         artworkTask = Task.detached(priority: .userInitiated) { [weak self] in
-            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
-            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression).trimmingCharacters(in: .whitespacesAndNewlines)
+            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression).trimmingCharacters(in: .whitespacesAndNewlines)
             let query = "\(cleanTitle) \(cleanArtist)".folding(options: .diacriticInsensitive, locale: .current)
             guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                   let url = URL(string: "https://itunes.apple.com/search?term=\(encoded)&entity=song&limit=1") else { return }
             
             var request = URLRequest(url: url)
-            request.timeoutInterval = 6.0
+            request.timeoutInterval = 5.0
             
             guard let (data, _) = try? await URLSession.shared.data(for: request),
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -313,11 +358,10 @@ final class SystemMediaProvider: NowPlayingProvider {
             
             let highResUrlString = artworkUrl100.replacingOccurrences(of: "100x100bb.jpg", with: "600x600bb.jpg")
             guard let highResUrl = URL(string: highResUrlString),
-                  let (imageData, _) = try? await URLSession.shared.data(from: highResUrl),
-                  let image = NSImage(data: imageData) else { return }
+                  let (imageData, _) = try? await URLSession.shared.data(from: highResUrl) else { return }
             
             await MainActor.run {
-                guard let self = self else { return }
+                guard let self = self, let image = NSImage(data: imageData) else { return }
                 self.artworkImage = image
             }
         }
@@ -363,10 +407,10 @@ final class SystemMediaProvider: NowPlayingProvider {
             }
             
             // 2. Query LRCLIB open lyrics database
-            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .folding(options: .diacriticInsensitive, locale: .current)
-            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)|\\[.*\\]", with: "", options: .regularExpression)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .folding(options: .diacriticInsensitive, locale: .current)
             
@@ -378,7 +422,7 @@ final class SystemMediaProvider: NowPlayingProvider {
             }
             
             var request = URLRequest(url: url)
-            request.timeoutInterval = 6.0
+            request.timeoutInterval = 5.0
             
             guard let (data, response) = try? await URLSession.shared.data(for: request),
                   let http = response as? HTTPURLResponse, http.statusCode == 200,

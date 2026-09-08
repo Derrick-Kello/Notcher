@@ -34,22 +34,30 @@ struct CollapsedNotchView: View {
                             .frame(width: artSize, height: artSize)
                     }
                 }
-                .frame(width: artSize + 8, alignment: .leading)
-                .padding(.leading, 6)
+                .frame(width: artSize + 6, alignment: .leading)
+                .padding(.leading, 4)
                 
-                // Center Spacer matching camera cutout
+                // Center Spacer matching camera cutout on notch displays, or Marquee on non-notch displays
                 if display.hasNotch {
                     Rectangle()
                         .fill(Color.black)
-                        .frame(width: max(0, display.physicalNotchWidth - (artSize * 2 + 28)))
+                        .frame(width: max(0, display.physicalNotchWidth - 6))
                 } else {
-                    // On external screens without a notch, show a subtle marquee/song title
-                    Text(item.title)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.9))
-                        .lineLimit(1)
-                        .padding(.horizontal, 6)
-                        .frame(maxWidth: .infinity)
+                    HStack(spacing: 4) {
+                        Text(item.title)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                        Text("•")
+                            .font(.system(size: 10))
+                            .foregroundColor(.white.opacity(0.4))
+                        Text(item.artist)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.white.opacity(0.7))
+                            .lineLimit(1)
+                    }
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity)
                 }
                 
                 // Right Wing: Animated Audio Visualizer Equalizer Bars
@@ -57,8 +65,8 @@ struct CollapsedNotchView: View {
                     AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: .white)
                         .frame(width: 18, height: 12)
                 }
-                .frame(width: artSize + 8, alignment: .trailing)
-                .padding(.trailing, 6)
+                .frame(width: artSize + 6, alignment: .trailing)
+                .padding(.trailing, 4)
             } else {
                 // Empty idle notch
                 Rectangle()

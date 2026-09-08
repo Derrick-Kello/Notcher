@@ -11,6 +11,7 @@ struct NotchRootView: View {
     var widgetRegistry: WidgetRegistry
     var configuration: NotchConfiguration
     
+    @State private var mediaProvider = SystemMediaProvider.shared
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false
     
@@ -42,6 +43,19 @@ struct NotchRootView: View {
         )
     }
     
+    private var closedNotchWidth: CGFloat {
+        let hasActiveMedia = mediaProvider.currentItem != nil
+        if display.hasNotch {
+            let artSize = max(14, display.physicalNotchHeight - 12)
+            // When music is active, expand width so wings with album art & equalizer stick out past physical notch
+            return hasActiveMedia
+                ? (display.physicalNotchWidth + (artSize * 2) + 20)
+                : max(140, display.physicalNotchWidth - 20)
+        } else {
+            return hasActiveMedia ? 340 : 175
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
@@ -65,6 +79,7 @@ struct NotchRootView: View {
                 mainLayout
                     .frame(height: isExpanded ? DisplayGeometry.openNotchSize.height : nil)
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
+                    .animation(animationSpring, value: closedNotchWidth)
                     .onHover { hovering in
                         handleHover(hovering)
                     }
@@ -84,17 +99,12 @@ struct NotchRootView: View {
             )
             .transition(.opacity)
         } else {
-            let width = display.hasNotch
-                ? max(140, display.physicalNotchWidth - 20)
-                : 175
-            let height = display.physicalNotchHeight
-            
             CollapsedNotchView(
                 stateMachine: stateMachine,
                 display: display,
                 configuration: configuration
             )
-            .frame(width: width, height: height)
+            .frame(width: closedNotchWidth, height: display.physicalNotchHeight)
             .contentShape(Rectangle())
             .onTapGesture {
                 withAnimation(animationSpring) {
