@@ -1,0 +1,30 @@
+{
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/CollapsedNotchView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.dia",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.swiftdeps"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/ExpandedNotchView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.dia",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.swiftdeps"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/NotchRootView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.dia",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.swiftdeps"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Settings/SettingsModel.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.dia",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.swiftdeps"
+  }
+}

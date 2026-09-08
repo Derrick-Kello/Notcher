@@ -1,0 +1,389 @@
+{
+  "" : {
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcher-primary.dia",
+    "emit-module-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcher-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcher-primary-emit-module.dia",
+    "pch" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcher-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcher-primary.swiftdeps"
+  },
+  "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/App/AppDelegate.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/App/AppEnvironment.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/AppEnvironment~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Models/DisplayDescriptor.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayDescriptor~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Models/NotchConfiguration.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchConfiguration~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Models/NotchState.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchState~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Models/NowPlayingItem.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingItem~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Models/WidgetDescriptor.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetDescriptor~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Protocols/BatteryProvider.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/BatteryProvider~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Protocols/CalendarProvider.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CalendarProvider~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Protocols/NotchWidget.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWidget~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Protocols/NowPlayingProvider.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NowPlayingProvider~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Protocols/SettingsStore.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsStore~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Services/SystemBatteryProvider.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemBatteryProvider~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/Services/SystemMediaProvider.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SystemMediaProvider~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/State/NotchEvent.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchEvent~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/State/NotchReducer.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchReducer~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Core/State/NotchStateMachine.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchStateMachine~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/MenuBar/MenuBarView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MenuBarView~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Animation/NotchAnimation.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchAnimation~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Layout/NotchLayoutEngine.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchLayoutEngine~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Layout/NotchShape.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchShape~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Layout/WidgetLayoutEngine.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetLayoutEngine~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/CollapsedNotchView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/CollapsedNotchView~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/ExpandedNotchView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/ExpandedNotchView~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Notch/Views/NotchRootView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchRootView~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Settings/SettingsModel.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsModel~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Settings/SettingsView.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Widgets/Core/WidgetContext.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetContext~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Widgets/Core/WidgetHost.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetHost~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Widgets/Core/WidgetRegistry.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WidgetRegistry~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/DisplayGeometry.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayGeometry~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/DisplayManager.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/DisplayManager~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/MouseTrackingManager.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/MouseTrackingManager~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/NotchPanel.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchPanel~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/NotchWindowController.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/NotchWindowController~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/Windowing/WindowBehavior.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/WindowBehavior~partial.swiftmodule"
+  },
+  "/Users/mac/Desktop/appshop/notcher/notcher/notcherApp.swift" : {
+    "const-values" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.swiftconstvalues",
+    "dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.d",
+    "diagnostics" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.dia",
+    "index-unit-output-path" : "/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.o",
+    "llvm-bc" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.bc",
+    "object" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.o",
+    "swift-dependencies" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp.swiftdeps",
+    "swiftmodule" : "/Users/mac/Desktop/appshop/notcher/build/Build/Intermediates.noindex/notcher.build/Debug/notcher.build/Objects-normal/arm64/notcherApp~partial.swiftmodule"
+  }
+}

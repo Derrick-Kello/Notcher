@@ -1,17 +1,16 @@
-//
-//  notcherApp.swift
-//  notcher
-//
-//  Created by Developer Goals on 9/8/26.
-//
-
 import SwiftUI
 
 @main
-struct notcherApp: App {
+struct NotcherApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        MenuBarExtra("Notcher", systemImage: "rectangle.topthird.inset.filled") {
+            MenuBarView()
+        }
+        
+        Settings {
+            SettingsView()
         }
     }
 }
