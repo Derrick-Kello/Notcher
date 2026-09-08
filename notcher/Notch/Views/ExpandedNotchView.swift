@@ -164,7 +164,7 @@ struct ExpandedNotchView: View {
                 
                 // Artist & Live Synced Lyrics
                 let lyricLine = mediaProvider.lyricLine(at: mediaProvider.currentItem?.elapsedTime ?? 0)
-                if !lyricLine.isEmpty && mediaProvider.isPlaying {
+                if !lyricLine.isEmpty {
                     HStack(spacing: 4) {
                         Image(systemName: "quote.bubble.fill")
                             .font(.system(size: 7))
@@ -395,23 +395,13 @@ struct ExpandedNotchView: View {
     }
     
     private func eventColor(for event: CalendarEvent) -> Color {
-        if let hex = event.calendarColor, !hex.isEmpty {
-            return Color.fromHex(hex) ?? .blue
+        if let hex = event.calendarColor, !hex.isEmpty, let c = colorFromHex(hex) {
+            return c
         }
         return .green
     }
     
-    private func timeString(from interval: TimeInterval) -> String {
-        let safeInterval = max(0, interval)
-        let minutes = Int(safeInterval) / 60
-        let seconds = Int(safeInterval) % 60
-        return String(format: "%d:%02d", minutes, seconds)
-    }
-}
-
-// Color hex helper
-extension Color {
-    static func fromHex(_ hex: String) -> Color? {
+    private func colorFromHex(_ hex: String) -> Color? {
         var cleanHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         if cleanHex.hasPrefix("#") { cleanHex.removeFirst() }
         guard let hexValue = UInt64(cleanHex, radix: 16) else { return nil }
@@ -431,5 +421,12 @@ extension Color {
             return nil
         }
         return Color(.sRGB, red: r, green: g, blue: b, opacity: a)
+    }
+    
+    private func timeString(from interval: TimeInterval) -> String {
+        let safeInterval = max(0, interval)
+        let minutes = Int(safeInterval) / 60
+        let seconds = Int(safeInterval) % 60
+        return String(format: "%d:%02d", minutes, seconds)
     }
 }

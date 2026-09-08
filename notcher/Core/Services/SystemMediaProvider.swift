@@ -38,6 +38,7 @@ final class SystemMediaProvider: NowPlayingProvider {
     
     private var activeSource: MediaSource = .none
     private var tickerTimer: Timer?
+    private var pollTimer: Timer?
     private var fetchTask: Task<Void, Never>?
     private var lyricsTask: Task<Void, Never>?
     private var artworkTask: Task<Void, Never>?
@@ -46,6 +47,7 @@ final class SystemMediaProvider: NowPlayingProvider {
     init() {
         setupObservers()
         refreshActiveMedia()
+        startPolling()
     }
     
     private func setupObservers() {
@@ -56,9 +58,10 @@ final class SystemMediaProvider: NowPlayingProvider {
             forName: NSNotification.Name("com.apple.Music.playerInfo"),
             object: nil,
             queue: .main
-        ) { [weak self] notification in
+        ) { [weak self] _ in
             Task { @MainActor in
-                self?.handleMusicNotification(notification)
+                self?.activeSource = .music
+                self?.fetchMusicDetails()
             }
         }
         
@@ -67,96 +70,202 @@ final class SystemMediaProvider: NowPlayingProvider {
             forName: NSNotification.Name("com.spotify.client.PlaybackStateChanged"),
             object: nil,
             queue: .main
-        ) { [weak self] notification in
+        ) { [weak self] _ in
             Task { @MainActor in
-                self?.handleSpotifyNotification(notification)
+                self?.activeSource = .spotify
+                self?.fetchSpotifyDetails()
             }
+        }
+    }
+    
+    private func startPolling() {
+        pollTimer?.invalidate()
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.refreshActiveMedia()
         }
     }
     
     func refreshActiveMedia() {
-        if NSWorkspace.shared.runningApplications.contains(where: { $0.bundleIdentifier == "com.apple.Music" }) {
-            activeSource = .music
-            fetchMusicDetails()
-        } else if NSWorkspace.shared.runningApplications.contains(where: { $0.bundleIdentifier == "com.spotify.client" }) {
-            activeSource = .spotify
-            fetchSpotifyDetails()
+        Task {
+            let script = """
+            set mPlaying to false
+            set sPlaying to false
+            set mRunning to false
+            set sRunning to false
+            
+            if application "Music" is running then
+                set mRunning to true
+                tell application "Music"
+                    try
+                        set mPlaying to (player state is playing)
+                    end try
+                end tell
+            end if
+            
+            if application "Spotify" is running then
+                set sRunning to true
+                tell application "Spotify"
+                    try
+                        set sPlaying to (player state is playing)
+                    end try
+                end tell
+            end if
+            
+            return {mRunning, mPlaying, sRunning, sPlaying}
+            """
+            
+            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
+            let mRunning = desc.atIndex(1)?.booleanValue ?? false
+            let mPlaying = desc.atIndex(2)?.booleanValue ?? false
+            let sRunning = desc.atIndex(3)?.booleanValue ?? false
+            let sPlaying = desc.atIndex(4)?.booleanValue ?? false
+            
+            if sPlaying {
+                self.activeSource = .spotify
+                self.fetchSpotifyDetails()
+            } else if mPlaying {
+                self.activeSource = .music
+                self.fetchMusicDetails()
+            } else if sRunning && self.activeSource == .spotify {
+                self.fetchSpotifyDetails()
+            } else if mRunning && self.activeSource == .music {
+                self.fetchMusicDetails()
+            } else if sRunning {
+                self.activeSource = .spotify
+                self.fetchSpotifyDetails()
+            } else if mRunning {
+                self.activeSource = .music
+                self.fetchMusicDetails()
+            }
         }
     }
     
-    private func handleMusicNotification(_ notification: Notification) {
-        guard let userInfo = notification.userInfo else { return }
-        
-        let state = userInfo["Player State"] as? String ?? ""
-        let isNowPlaying = (state == "Playing")
-        let title = userInfo["Name"] as? String ?? ""
-        let artist = userInfo["Artist"] as? String ?? ""
-        let album = userInfo["Album"] as? String ?? ""
-        let totalTime = (userInfo["Total Time"] as? Double ?? 0) / 1000.0
-        
-        if !title.isEmpty {
-            self.activeSource = .music
-            self.isPlaying = isNowPlaying
-            let key = "\(title)_\(artist)"
-            if key != lastTrackKey {
-                self.lastTrackKey = key
-                self.artworkImage = nil
-                self.fetchLyrics(title: title, artist: artist, source: .music)
-                self.fetchOnlineArtwork(title: title, artist: artist)
-            }
+    func fetchMusicDetails() {
+        fetchTask?.cancel()
+        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
+            let script = """
+            tell application "Music"
+                try
+                    set pState to (player state is playing)
+                    set tName to name of current track
+                    set tArtist to artist of current track
+                    set tAlbum to album of current track
+                    set tPos to player position
+                    set tDur to duration of current track
+                    return {pState, tName, tArtist, tAlbum, tPos, tDur}
+                on error
+                    return {false, "", "", "", 0, 0}
+                end try
+            end tell
+            """
             
-            self.currentItem = NowPlayingItem(
-                title: title,
-                artist: artist,
-                album: album,
-                duration: totalTime,
-                elapsedTime: self.currentItem?.elapsedTime ?? 0,
-                isPlaying: isNowPlaying,
-                artworkData: self.currentItem?.artworkData
-            )
-            updatePlaybackTicker()
-            fetchMusicDetails()
-        } else if !isNowPlaying && activeSource == .music {
-            self.isPlaying = false
-            updatePlaybackTicker()
+            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
+            guard desc.numberOfItems >= 6 else { return }
+            
+            let isPlaying = desc.atIndex(1)?.booleanValue ?? false
+            let title = desc.atIndex(2)?.stringValue ?? ""
+            let artist = desc.atIndex(3)?.stringValue ?? ""
+            let album = desc.atIndex(4)?.stringValue ?? ""
+            let position = desc.atIndex(5)?.doubleValue ?? 0
+            let duration = desc.atIndex(6)?.doubleValue ?? 0
+            
+            guard !title.isEmpty else { return }
+            
+            await MainActor.run {
+                guard let self = self else { return }
+                self.activeSource = .music
+                self.isPlaying = isPlaying
+                self.currentItem = NowPlayingItem(
+                    title: title,
+                    artist: artist,
+                    album: album,
+                    duration: duration,
+                    elapsedTime: position,
+                    isPlaying: isPlaying,
+                    artworkData: self.currentItem?.artworkData
+                )
+                self.updatePlaybackTicker()
+                
+                let key = "Music_\(title)_\(artist)"
+                if key != self.lastTrackKey {
+                    self.lastTrackKey = key
+                    self.artworkImage = nil
+                    self.fetchLyrics(title: title, artist: artist, source: .music)
+                    self.fetchOnlineArtwork(title: title, artist: artist)
+                }
+            }
         }
     }
     
-    private func handleSpotifyNotification(_ notification: Notification) {
-        guard let userInfo = notification.userInfo else { return }
-        
-        let state = userInfo["Player State"] as? String ?? ""
-        let isNowPlaying = (state == "Playing" || state == "kPSP")
-        let title = userInfo["Name"] as? String ?? ""
-        let artist = userInfo["Artist"] as? String ?? ""
-        let album = userInfo["Album"] as? String ?? ""
-        let duration = (userInfo["Duration"] as? Double ?? 0) / 1000.0
-        
-        if !title.isEmpty {
-            self.activeSource = .spotify
-            self.isPlaying = isNowPlaying
-            let key = "\(title)_\(artist)"
-            if key != lastTrackKey {
-                self.lastTrackKey = key
-                self.artworkImage = nil
-                self.fetchLyrics(title: title, artist: artist, source: .spotify)
-                self.fetchOnlineArtwork(title: title, artist: artist)
+    func fetchSpotifyDetails() {
+        fetchTask?.cancel()
+        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
+            let script = """
+            tell application "Spotify"
+                try
+                    set pState to (player state is playing)
+                    set tName to name of current track
+                    set tArtist to artist of current track
+                    set tAlbum to album of current track
+                    set tPos to player position
+                    set tDur to (duration of current track) / 1000.0
+                    set artUrl to artwork url of current track
+                    return {pState, tName, tArtist, tAlbum, tPos, tDur, artUrl}
+                on error
+                    return {false, "", "", "", 0, 0, ""}
+                end try
+            end tell
+            """
+            
+            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
+            guard desc.numberOfItems >= 6 else { return }
+            
+            let isPlaying = desc.atIndex(1)?.booleanValue ?? false
+            let title = desc.atIndex(2)?.stringValue ?? ""
+            let artist = desc.atIndex(3)?.stringValue ?? ""
+            let album = desc.atIndex(4)?.stringValue ?? ""
+            let position = desc.atIndex(5)?.doubleValue ?? 0
+            let duration = desc.atIndex(6)?.doubleValue ?? 0
+            let artUrlString = desc.atIndex(7)?.stringValue ?? ""
+            
+            guard !title.isEmpty else { return }
+            
+            var spotifyImage: NSImage? = nil
+            if let url = URL(string: artUrlString), !artUrlString.isEmpty {
+                if let (data, _) = try? await URLSession.shared.data(from: url) {
+                    spotifyImage = NSImage(data: data)
+                }
             }
             
-            self.currentItem = NowPlayingItem(
-                title: title,
-                artist: artist,
-                album: album,
-                duration: duration,
-                elapsedTime: self.currentItem?.elapsedTime ?? 0,
-                isPlaying: isNowPlaying,
-                artworkData: self.currentItem?.artworkData
-            )
-            updatePlaybackTicker()
-            fetchSpotifyDetails()
-        } else if !isNowPlaying && activeSource == .spotify {
-            self.isPlaying = false
-            updatePlaybackTicker()
+            await MainActor.run {
+                guard let self = self else { return }
+                self.activeSource = .spotify
+                self.isPlaying = isPlaying
+                if let img = spotifyImage {
+                    self.artworkImage = img
+                }
+                self.currentItem = NowPlayingItem(
+                    title: title,
+                    artist: artist,
+                    album: album,
+                    duration: duration,
+                    elapsedTime: position,
+                    isPlaying: isPlaying,
+                    artworkData: self.currentItem?.artworkData
+                )
+                self.updatePlaybackTicker()
+                
+                let key = "Spotify_\(title)_\(artist)"
+                if key != self.lastTrackKey {
+                    self.lastTrackKey = key
+                    if spotifyImage == nil {
+                        self.artworkImage = nil
+                        self.fetchOnlineArtwork(title: title, artist: artist)
+                    }
+                    self.fetchLyrics(title: title, artist: artist, source: .spotify)
+                }
+            }
         }
     }
     
@@ -181,157 +290,15 @@ final class SystemMediaProvider: NowPlayingProvider {
         }
     }
     
-    private func fetchMusicDetails() {
-        fetchTask?.cancel()
-        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
-            let script = """
-            tell application "Music"
-                try
-                    set playerState to (player state is playing)
-                    set currentTrackName to name of current track
-                    set currentTrackArtist to artist of current track
-                    set currentTrackAlbum to album of current track
-                    set trackPosition to player position
-                    set trackDuration to duration of current track
-                    try
-                        set artData to data of artwork 1 of current track
-                    on error
-                        set artData to ""
-                    end try
-                    return {playerState, currentTrackName, currentTrackArtist, currentTrackAlbum, trackPosition, trackDuration, artData}
-                on error
-                    return {false, "", "", "", 0, 0, ""}
-                end try
-            end tell
-            """
-            
-            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
-            guard desc.numberOfItems >= 6 else { return }
-            
-            let isPlaying = desc.atIndex(1)?.booleanValue ?? false
-            let title = desc.atIndex(2)?.stringValue ?? ""
-            let artist = desc.atIndex(3)?.stringValue ?? ""
-            let album = desc.atIndex(4)?.stringValue ?? ""
-            let position = desc.atIndex(5)?.doubleValue ?? 0
-            let duration = desc.atIndex(6)?.doubleValue ?? 0
-            let artRawData = desc.atIndex(7)?.data
-            
-            guard !title.isEmpty else { return }
-            
-            var image: NSImage? = nil
-            if let data = artRawData, !data.isEmpty {
-                image = NSImage(data: data)
-            }
-            
-            await MainActor.run {
-                guard let self = self else { return }
-                self.activeSource = .music
-                self.isPlaying = isPlaying
-                if let image = image {
-                    self.artworkImage = image
-                }
-                self.currentItem = NowPlayingItem(
-                    title: title,
-                    artist: artist,
-                    album: album,
-                    duration: duration,
-                    elapsedTime: position,
-                    isPlaying: isPlaying,
-                    artworkData: artRawData ?? self.currentItem?.artworkData
-                )
-                self.updatePlaybackTicker()
-                
-                let key = "\(title)_\(artist)"
-                if key != self.lastTrackKey {
-                    self.lastTrackKey = key
-                    self.fetchLyrics(title: title, artist: artist, source: .music)
-                    if self.artworkImage == nil {
-                        self.fetchOnlineArtwork(title: title, artist: artist)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func fetchSpotifyDetails() {
-        fetchTask?.cancel()
-        fetchTask = Task.detached(priority: .userInitiated) { [weak self] in
-            let script = """
-            tell application "Spotify"
-                try
-                    set playerState to (player state is playing)
-                    set currentTrackName to name of current track
-                    set currentTrackArtist to artist of current track
-                    set currentTrackAlbum to album of current track
-                    set trackPosition to player position
-                    set trackDuration to (duration of current track) / 1000.0
-                    set artUrl to artwork url of current track
-                    return {playerState, currentTrackName, currentTrackArtist, currentTrackAlbum, trackPosition, trackDuration, artUrl}
-                on error
-                    return {false, "", "", "", 0, 0, ""}
-                end try
-            end tell
-            """
-            
-            guard let desc = try? await AppleScriptHelper.execute(script) else { return }
-            guard desc.numberOfItems >= 6 else { return }
-            
-            let isPlaying = desc.atIndex(1)?.booleanValue ?? false
-            let title = desc.atIndex(2)?.stringValue ?? ""
-            let artist = desc.atIndex(3)?.stringValue ?? ""
-            let album = desc.atIndex(4)?.stringValue ?? ""
-            let position = desc.atIndex(5)?.doubleValue ?? 0
-            let duration = desc.atIndex(6)?.doubleValue ?? 0
-            let artUrlString = desc.atIndex(7)?.stringValue ?? ""
-            
-            guard !title.isEmpty else { return }
-            
-            var image: NSImage? = nil
-            var artData: Data? = nil
-            if let url = URL(string: artUrlString), !artUrlString.isEmpty {
-                if let (data, _) = try? await URLSession.shared.data(from: url) {
-                    artData = data
-                    image = NSImage(data: data)
-                }
-            }
-            
-            await MainActor.run {
-                guard let self = self else { return }
-                self.activeSource = .spotify
-                self.isPlaying = isPlaying
-                if let image = image {
-                    self.artworkImage = image
-                }
-                self.currentItem = NowPlayingItem(
-                    title: title,
-                    artist: artist,
-                    album: album,
-                    duration: duration,
-                    elapsedTime: position,
-                    isPlaying: isPlaying,
-                    artworkData: artData ?? self.currentItem?.artworkData
-                )
-                self.updatePlaybackTicker()
-                
-                let key = "\(title)_\(artist)"
-                if key != self.lastTrackKey {
-                    self.lastTrackKey = key
-                    self.fetchLyrics(title: title, artist: artist, source: .spotify)
-                    if self.artworkImage == nil {
-                        self.fetchOnlineArtwork(title: title, artist: artist)
-                    }
-                }
-            }
-        }
-    }
-    
     // MARK: - Online Artwork Fallback (iTunes Search API)
     private func fetchOnlineArtwork(title: String, artist: String) {
         guard !title.isEmpty else { return }
         
         artworkTask?.cancel()
         artworkTask = Task.detached(priority: .userInitiated) { [weak self] in
-            let query = "\(title) \(artist)".folding(options: .diacriticInsensitive, locale: .current)
+            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+            let query = "\(cleanTitle) \(cleanArtist)".folding(options: .diacriticInsensitive, locale: .current)
             guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                   let url = URL(string: "https://itunes.apple.com/search?term=\(encoded)&entity=song&limit=1") else { return }
             
@@ -350,7 +317,7 @@ final class SystemMediaProvider: NowPlayingProvider {
                   let image = NSImage(data: imageData) else { return }
             
             await MainActor.run {
-                guard let self = self, self.artworkImage == nil else { return }
+                guard let self = self else { return }
                 self.artworkImage = image
             }
         }
@@ -396,8 +363,13 @@ final class SystemMediaProvider: NowPlayingProvider {
             }
             
             // 2. Query LRCLIB open lyrics database
-            let cleanTitle = title.folding(options: .diacriticInsensitive, locale: .current)
-            let cleanArtist = artist.folding(options: .diacriticInsensitive, locale: .current)
+            let cleanTitle = title.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .folding(options: .diacriticInsensitive, locale: .current)
+            let cleanArtist = artist.replacingOccurrences(of: "\\(.*\\)", with: "", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .folding(options: .diacriticInsensitive, locale: .current)
+            
             guard let encTitle = cleanTitle.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                   let encArtist = cleanArtist.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                   let url = URL(string: "https://lrclib.net/api/search?track_name=\(encTitle)&artist_name=\(encArtist)") else {
@@ -481,7 +453,8 @@ final class SystemMediaProvider: NowPlayingProvider {
         
         let trimmed = currentLyrics.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
-            return trimmed.replacingOccurrences(of: "\n", with: "  •  ")
+            let lines = trimmed.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            return lines.first ?? trimmed
         }
         return ""
     }
