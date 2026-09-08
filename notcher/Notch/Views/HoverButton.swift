@@ -15,7 +15,9 @@ struct HoverButton: View {
     @State private var isHovering = false
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            action()
+        }) {
             ZStack {
                 Circle()
                     .fill(isHovering ? Color.white.opacity(0.18) : Color.white.opacity(0.08))
@@ -25,13 +27,13 @@ struct HoverButton: View {
                     .foregroundColor(iconColor)
                     .font(.system(size: iconSize, weight: .semibold))
             }
+            .contentShape(Circle())
         }
         .buttonStyle(PlainButtonStyle())
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(.easeInOut(duration: 0.12)) {
                 isHovering = hovering
             }
         }
     }
 }
-

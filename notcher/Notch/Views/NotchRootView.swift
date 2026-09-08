@@ -65,12 +65,8 @@ struct NotchRootView: View {
                 mainLayout
                     .frame(height: isExpanded ? DisplayGeometry.openNotchSize.height : nil)
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
-                    .contentShape(Rectangle())
                     .onHover { hovering in
                         handleHover(hovering)
-                    }
-                    .onTapGesture {
-                        handleTap()
                     }
             }
         }
@@ -99,6 +95,12 @@ struct NotchRootView: View {
                 configuration: configuration
             )
             .frame(width: width, height: height)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation(animationSpring) {
+                    stateMachine.send(.expandRequested)
+                }
+            }
             .transition(.opacity)
         }
     }
@@ -143,12 +145,6 @@ struct NotchRootView: View {
                     }
                 }
             }
-        }
-    }
-    
-    private func handleTap() {
-        withAnimation(animationSpring) {
-            stateMachine.send(.toggleRequested)
         }
     }
 }

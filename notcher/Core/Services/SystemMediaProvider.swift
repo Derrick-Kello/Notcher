@@ -466,11 +466,8 @@ final class SystemMediaProvider: NowPlayingProvider {
         updatePlaybackTicker()
         Task {
             await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to playpause")
-            if self.activeSource == .music {
-                self.fetchMusicDetails()
-            } else {
-                self.fetchSpotifyDetails()
-            }
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            self.refreshActiveMedia()
         }
     }
     
@@ -479,11 +476,7 @@ final class SystemMediaProvider: NowPlayingProvider {
         Task {
             await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to next track")
             try? await Task.sleep(nanoseconds: 200_000_000)
-            if self.activeSource == .music {
-                self.fetchMusicDetails()
-            } else {
-                self.fetchSpotifyDetails()
-            }
+            self.refreshActiveMedia()
         }
     }
     
@@ -492,11 +485,7 @@ final class SystemMediaProvider: NowPlayingProvider {
         Task {
             await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to previous track")
             try? await Task.sleep(nanoseconds: 200_000_000)
-            if self.activeSource == .music {
-                self.fetchMusicDetails()
-            } else {
-                self.fetchSpotifyDetails()
-            }
+            self.refreshActiveMedia()
         }
     }
     
