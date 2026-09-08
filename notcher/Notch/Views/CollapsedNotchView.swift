@@ -16,6 +16,7 @@ struct CollapsedNotchView: View {
     var body: some View {
         let height = display.physicalNotchHeight
         let artSize = max(14, height - 14)
+        let themeColor = configuration.theme.primaryColor(dynamicArtworkColor: mediaProvider.dynamicColor)
         
         HStack(spacing: 0) {
             if mediaProvider.isAvailable, let item = mediaProvider.currentItem {
@@ -30,7 +31,7 @@ struct CollapsedNotchView: View {
                     } else {
                         Image(systemName: "music.note")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.white.opacity(0.85))
+                            .foregroundColor(themeColor)
                             .frame(width: artSize, height: artSize)
                     }
                 }
@@ -60,7 +61,7 @@ struct CollapsedNotchView: View {
                 
                 // Right Side: Animated Audio Visualizer Equalizer Bars
                 HStack {
-                    AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: .white)
+                    AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                         .frame(width: 16, height: 11)
                 }
                 .padding(.trailing, 8)

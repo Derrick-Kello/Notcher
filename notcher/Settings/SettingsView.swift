@@ -47,21 +47,60 @@ struct SettingsView: View {
             }
             
             Form {
-                Text("Widgets configuration coming soon.")
-            }
-            .padding()
-            .tabItem {
-                Label("Widgets", systemImage: "square.grid.2x2")
-            }
-            
-            Form {
-                Toggle("Reduce Effects", isOn: $settingsBindable.configuration.reducedEffects)
+                Section(header: Text("Theme")) {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                        ForEach(NotchTheme.allCases) { theme in
+                            let isSelected = settingsBindable.configuration.theme == theme
+                            Button {
+                                settingsBindable.configuration.theme = theme
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Circle()
+                                        .fill(theme.gradient(dynamicArtworkColor: nil))
+                                        .frame(width: 18, height: 18)
+                                    
+                                    Text(theme.displayName)
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.primary)
+                                    
+                                    Spacer()
+                                    
+                                    if isSelected {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.accentColor)
+                                    }
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(isSelected ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.04))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 1.5)
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                
+                Section(header: Text("Effects & Lighting")) {
+                    Toggle("Ambient Album Art Lighting", isOn: $settingsBindable.configuration.lightingEffectEnabled)
+                    Text("Projects a soft color glow matching current album artwork behind the notch.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Toggle("Reduce Effects", isOn: $settingsBindable.configuration.reducedEffects)
+                }
             }
             .padding()
             .tabItem {
                 Label("Appearance", systemImage: "paintpalette")
             }
         }
-        .frame(width: 450, height: 350)
+        .frame(width: 480, height: 380)
     }
 }

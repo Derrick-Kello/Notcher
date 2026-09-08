@@ -16,6 +16,8 @@ struct NotchConfiguration: Codable, Sendable, Equatable {
     var enabledWidgets: [String] = []
     var widgetOrder: [String] = []
     var reducedEffects: Bool = false
+    var theme: NotchTheme = .dynamicAlbum
+    var lightingEffectEnabled: Bool = true
     
     /// Collapsed notch dimensions (logical points)
     var collapsedWidth: CGFloat = 185
@@ -30,3 +32,4 @@ struct NotchConfiguration: Codable, Sendable, Equatable {
     
     static let `default` = NotchConfiguration()
 }
+

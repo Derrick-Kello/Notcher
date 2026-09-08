@@ -5,6 +5,7 @@
 
 import Foundation
 import AppKit
+import SwiftUI
 import Observation
 
 public struct SyncedLyric: Sendable, Equatable {
@@ -31,6 +32,7 @@ final class SystemMediaProvider: NowPlayingProvider {
     private(set) var currentItem: NowPlayingItem?
     private(set) var isPlaying: Bool = false
     private(set) var artworkImage: NSImage? = nil
+    private(set) var dynamicColor: Color? = nil
     private(set) var currentLyrics: String = ""
     private(set) var syncedLyrics: [SyncedLyric] = []
     private(set) var isFetchingLyrics: Bool = false
@@ -76,11 +78,33 @@ final class SystemMediaProvider: NowPlayingProvider {
                 self?.fetchSpotifyDetails()
             }
         }
+        
+        // Workspace app lifecycle notifications
+        let wsCenter = NSWorkspace.shared.notificationCenter
+        wsCenter.addObserver(
+            forName: NSWorkspace.didLaunchApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.refreshActiveMedia()
+            }
+        }
+        
+        wsCenter.addObserver(
+            forName: NSWorkspace.didTerminateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.refreshActiveMedia()
+            }
+        }
     }
     
     private func startPolling() {
         pollTimer?.invalidate()
-        let timer = Timer(timeInterval: 1.5, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 1.2, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.refreshActiveMedia()
             }
@@ -91,14 +115,15 @@ final class SystemMediaProvider: NowPlayingProvider {
     
     func refreshActiveMedia() {
         let runningApps = NSWorkspace.shared.runningApplications
-        let isMusicRunning = runningApps.contains { $0.bundleIdentifier == "com.apple.Music" }
-        let isSpotifyRunning = runningApps.contains { $0.bundleIdentifier == "com.spotify.client" }
+        let isMusicRunning = runningApps.contains { $0.bundleIdentifier == "com.apple.Music" || $0.bundleIdentifier?.lowercased().hasSuffix(".music") == true }
+        let isSpotifyRunning = runningApps.contains { $0.bundleIdentifier == "com.spotify.client" || $0.bundleIdentifier?.lowercased().contains("spotify") == true }
         
         if !isMusicRunning && !isSpotifyRunning {
             if currentItem != nil {
                 currentItem = nil
                 isPlaying = false
                 artworkImage = nil
+                dynamicColor = nil
                 currentLyrics = ""
                 syncedLyrics = []
                 lastTrackKey = ""
@@ -116,43 +141,24 @@ final class SystemMediaProvider: NowPlayingProvider {
             return
         }
         
-        // If both are running, check which one is actively playing
+        // If both are running, poll each independently in parallel
         Task.detached(priority: .userInitiated) { [weak self] in
-            let script = """
-            set sPlaying to false
-            set mPlaying to false
-            tell application "Spotify"
-                try
-                    set sPlaying to (player state is playing)
-                end try
-            end tell
-            tell application "Music"
-                try
-                    set mPlaying to (player state is playing)
-                end try
-            end tell
-            return {sPlaying, mPlaying}
-            """
+            async let sCheck = AppleScriptHelper.execute("tell application \"Spotify\" to get (player state is playing)")
+            async let mCheck = AppleScriptHelper.execute("tell application \"Music\" to get (player state is playing)")
             
-            if let desc = try? await AppleScriptHelper.execute(script) {
-                let sPlaying = desc.atIndex(1)?.booleanValue ?? false
-                let mPlaying = desc.atIndex(2)?.booleanValue ?? false
-                
-                await MainActor.run {
-                    guard let self = self else { return }
-                    if sPlaying {
-                        self.fetchSpotifyDetails()
-                    } else if mPlaying {
-                        self.fetchMusicDetails()
-                    } else if self.activeSource == .spotify {
-                        self.fetchSpotifyDetails()
-                    } else {
-                        self.fetchMusicDetails()
-                    }
-                }
-            } else {
-                await MainActor.run {
-                    self?.fetchSpotifyDetails()
+            let sPlaying = (try? await sCheck)?.booleanValue ?? false
+            let mPlaying = (try? await mCheck)?.booleanValue ?? false
+            
+            await MainActor.run {
+                guard let self = self else { return }
+                if sPlaying {
+                    self.fetchSpotifyDetails()
+                } else if mPlaying {
+                    self.fetchMusicDetails()
+                } else if self.activeSource == .spotify {
+                    self.fetchSpotifyDetails()
+                } else {
+                    self.fetchMusicDetails()
                 }
             }
         }
@@ -197,6 +203,7 @@ final class SystemMediaProvider: NowPlayingProvider {
                 await MainActor.run {
                     self?.currentItem = nil
                     self?.isPlaying = false
+                    self?.dynamicColor = nil
                 }
                 return
             }
@@ -212,6 +219,9 @@ final class SystemMediaProvider: NowPlayingProvider {
                 self.isPlaying = isPlaying
                 if let img = directImage {
                     self.artworkImage = img
+                    if let avg = img.extractAverageColor() {
+                        self.dynamicColor = Color(avg)
+                    }
                 }
                 self.currentItem = NowPlayingItem(
                     title: title,
@@ -272,6 +282,7 @@ final class SystemMediaProvider: NowPlayingProvider {
                 await MainActor.run {
                     self?.currentItem = nil
                     self?.isPlaying = false
+                    self?.dynamicColor = nil
                 }
                 return
             }
@@ -289,6 +300,9 @@ final class SystemMediaProvider: NowPlayingProvider {
                 self.isPlaying = isPlaying
                 if let data = artData, let img = NSImage(data: data) {
                     self.artworkImage = img
+                    if let avg = img.extractAverageColor() {
+                        self.dynamicColor = Color(avg)
+                    }
                 }
                 self.currentItem = NowPlayingItem(
                     title: title,
@@ -363,6 +377,9 @@ final class SystemMediaProvider: NowPlayingProvider {
             await MainActor.run {
                 guard let self = self, let image = NSImage(data: imageData) else { return }
                 self.artworkImage = image
+                if let avg = image.extractAverageColor() {
+                    self.dynamicColor = Color(avg)
+                }
             }
         }
     }
@@ -548,6 +565,13 @@ final class SystemMediaProvider: NowPlayingProvider {
         let appName = activeSource == .spotify ? "Spotify" : "Music"
         Task {
             await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to set player position to \(clampedTime)")
+        }
+    }
+    
+    func openMusicApp() {
+        let bundleId = activeSource == .spotify ? "com.spotify.client" : "com.apple.Music"
+        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
+            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
         }
     }
 }

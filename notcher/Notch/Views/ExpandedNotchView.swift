@@ -118,39 +118,78 @@ struct ExpandedNotchView: View {
         }
     }
     
+    private var primaryThemeColor: Color {
+        configuration.theme.primaryColor(dynamicArtworkColor: mediaProvider.dynamicColor)
+    }
+    
+    private var themeGradient: LinearGradient {
+        configuration.theme.gradient(dynamicArtworkColor: mediaProvider.dynamicColor)
+    }
+    
     // MARK: - Music Player Section (Matching BoringNotch MusicPlayerView)
     private var musicPlayerSection: some View {
         HStack(alignment: .center, spacing: 14) {
-            // Album Artwork (90 x 90)
+            // Album Artwork (90 x 90) with Ambient Lighting Glow
             ZStack(alignment: .bottomTrailing) {
-                if let artwork = mediaProvider.artworkImage {
-                    Image(nsImage: artwork)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 90, height: 90)
-                        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-                        .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
-                } else {
-                    RoundedRectangle(cornerRadius: 13, style: .continuous)
-                        .fill(Color(white: 0.16))
-                        .frame(width: 90, height: 90)
-                        .overlay {
-                            Image(systemName: "music.note")
-                                .font(.system(size: 34))
-                                .foregroundColor(.white.opacity(0.25))
-                        }
+                // Ambient lighting backdrop
+                if configuration.lightingEffectEnabled {
+                    if let artwork = mediaProvider.artworkImage {
+                        Image(nsImage: artwork)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 90, height: 90)
+                            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                            .scaleEffect(x: 1.35, y: 1.45)
+                            .rotationEffect(.degrees(92))
+                            .blur(radius: 35)
+                            .opacity(mediaProvider.isPlaying ? 0.65 : 0.0)
+                            .animation(.easeInOut(duration: 0.4), value: mediaProvider.isPlaying)
+                    } else if mediaProvider.isPlaying {
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(primaryThemeColor)
+                            .frame(width: 90, height: 90)
+                            .scaleEffect(1.3)
+                            .blur(radius: 35)
+                            .opacity(0.35)
+                    }
                 }
                 
-                // App Badge Icon
-                Circle()
-                    .fill(Color.black)
-                    .frame(width: 22, height: 22)
-                    .overlay {
-                        Image(systemName: mediaProvider.isPlaying ? "play.circle.fill" : "music.note.circle.fill")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white)
+                // Main Artwork button
+                Button {
+                    mediaProvider.openMusicApp()
+                } label: {
+                    ZStack(alignment: .bottomTrailing) {
+                        if let artwork = mediaProvider.artworkImage {
+                            Image(nsImage: artwork)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 90, height: 90)
+                                .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                                .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
+                        } else {
+                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                .fill(Color(white: 0.16))
+                                .frame(width: 90, height: 90)
+                                .overlay {
+                                    Image(systemName: "music.note")
+                                        .font(.system(size: 34))
+                                        .foregroundColor(primaryThemeColor.opacity(0.6))
+                                }
+                        }
+                        
+                        // App Badge Icon
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: 22, height: 22)
+                            .overlay {
+                                Image(systemName: mediaProvider.isPlaying ? "play.circle.fill" : "music.note.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(primaryThemeColor)
+                            }
+                            .offset(x: 4, y: 4)
                     }
-                    .offset(x: 4, y: 4)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .frame(width: 90, height: 90)
             
@@ -167,11 +206,11 @@ struct ExpandedNotchView: View {
                 if !lyricLine.isEmpty {
                     HStack(spacing: 4) {
                         Image(systemName: "quote.bubble.fill")
-                            .font(.system(size: 7))
-                            .foregroundColor(.green.opacity(0.9))
+                            .font(.system(size: 8))
+                            .foregroundColor(primaryThemeColor)
                         Text(lyricLine)
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.white.opacity(0.85))
+                            .foregroundColor(.white.opacity(0.9))
                             .lineLimit(1)
                     }
                     .frame(height: 14)
@@ -192,7 +231,7 @@ struct ExpandedNotchView: View {
                                 .frame(height: 4)
                             
                             Capsule()
-                                .fill(Color.white)
+                                .fill(themeGradient)
                                 .frame(width: max(0, min(geo.size.width * CGFloat(progressValue), geo.size.width)), height: 4)
                         }
                         .contentShape(Rectangle())
@@ -237,13 +276,14 @@ struct ExpandedNotchView: View {
                     
                     Button(action: { mediaProvider.playPause() }) {
                         Circle()
-                            .fill(Color.white)
+                            .fill(primaryThemeColor)
                             .frame(width: 30, height: 30)
                             .overlay {
                                 Image(systemName: mediaProvider.isPlaying ? "pause.fill" : "play.fill")
                                     .font(.system(size: 13, weight: .bold))
                                     .foregroundColor(.black)
                             }
+                            .shadow(color: primaryThemeColor.opacity(0.4), radius: 4, x: 0, y: 1)
                     }
                     .buttonStyle(PlainButtonStyle())
                     
@@ -254,7 +294,7 @@ struct ExpandedNotchView: View {
                     Spacer()
                     
                     // Equalizer visualizer next to controls
-                    AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: .white.opacity(0.85))
+                    AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: primaryThemeColor)
                         .frame(width: 20, height: 13)
                         .padding(.trailing, 4)
                 }

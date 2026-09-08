@@ -9,7 +9,9 @@ struct NotchRootView: View {
     var stateMachine: NotchStateMachine
     var display: DisplayDescriptor
     var widgetRegistry: WidgetRegistry
-    var configuration: NotchConfiguration
+    
+    private var settings: SettingsModel { AppEnvironment.shared.settings }
+    private var configuration: NotchConfiguration { settings.configuration }
     
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false

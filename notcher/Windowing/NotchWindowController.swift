@@ -131,8 +131,7 @@ final class NotchWindowController {
             let rootView = NotchRootView(
                 stateMachine: environment.stateMachine,
                 display: display,
-                widgetRegistry: environment.widgetRegistry,
-                configuration: environment.settings.configuration
+                widgetRegistry: environment.widgetRegistry
             )
             window.contentView = NotchHostingView(
                 rootView: rootView,
