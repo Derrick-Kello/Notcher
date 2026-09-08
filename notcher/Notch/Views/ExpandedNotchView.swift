@@ -43,7 +43,7 @@ struct ExpandedNotchView: View {
                 calendarSection
                     .frame(width: 215)
             }
-            .frame(height: 132)
+            .frame(height: 134)
             
             Spacer(minLength: 0)
         }
@@ -129,6 +129,7 @@ struct ExpandedNotchView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 90, height: 90)
                         .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
                 } else {
                     RoundedRectangle(cornerRadius: 13, style: .continuous)
                         .fill(Color(white: 0.16))
@@ -153,22 +154,37 @@ struct ExpandedNotchView: View {
             }
             .frame(width: 90, height: 90)
             
-            // Track Info & Controls
-            VStack(alignment: .leading, spacing: 3) {
+            // Track Info, Lyrics & Controls
+            VStack(alignment: .leading, spacing: 2) {
                 // Title
                 Text(mediaProvider.currentItem?.title.isEmpty == false ? mediaProvider.currentItem!.title : "Not Playing")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
                 
-                // Artist
-                Text(mediaProvider.currentItem?.artist.isEmpty == false ? mediaProvider.currentItem!.artist : "Apple Music / Spotify")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white.opacity(0.55))
-                    .lineLimit(1)
+                // Artist & Live Synced Lyrics
+                let lyricLine = mediaProvider.lyricLine(at: mediaProvider.currentItem?.elapsedTime ?? 0)
+                if !lyricLine.isEmpty && mediaProvider.isPlaying {
+                    HStack(spacing: 4) {
+                        Image(systemName: "quote.bubble.fill")
+                            .font(.system(size: 7))
+                            .foregroundColor(.green.opacity(0.9))
+                        Text(lyricLine)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.white.opacity(0.85))
+                            .lineLimit(1)
+                    }
+                    .frame(height: 14)
+                } else {
+                    Text(mediaProvider.currentItem?.artist.isEmpty == false ? mediaProvider.currentItem!.artist : "Apple Music / Spotify")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
+                        .frame(height: 14)
+                }
                 
                 // Progress Scrubber Bar
-                VStack(spacing: 3) {
+                VStack(spacing: 2) {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
@@ -196,8 +212,8 @@ struct ExpandedNotchView: View {
                                 }
                         )
                     }
-                    .frame(height: 6)
-                    .padding(.top, 4)
+                    .frame(height: 5)
+                    .padding(.top, 2)
                     
                     HStack {
                         let duration = mediaProvider.currentItem?.duration ?? 0
@@ -215,23 +231,23 @@ struct ExpandedNotchView: View {
                 
                 // Playback Buttons Toolbar
                 HStack(spacing: 14) {
-                    HoverButton(icon: "backward.fill", iconColor: .white.opacity(0.8), size: 28, iconSize: 13) {
+                    HoverButton(icon: "backward.fill", iconColor: .white.opacity(0.8), size: 26, iconSize: 12) {
                         mediaProvider.previous()
                     }
                     
                     Button(action: { mediaProvider.playPause() }) {
                         Circle()
                             .fill(Color.white)
-                            .frame(width: 32, height: 32)
+                            .frame(width: 30, height: 30)
                             .overlay {
                                 Image(systemName: mediaProvider.isPlaying ? "pause.fill" : "play.fill")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(.system(size: 13, weight: .bold))
                                     .foregroundColor(.black)
                             }
                     }
                     .buttonStyle(PlainButtonStyle())
                     
-                    HoverButton(icon: "forward.fill", iconColor: .white.opacity(0.8), size: 28, iconSize: 13) {
+                    HoverButton(icon: "forward.fill", iconColor: .white.opacity(0.8), size: 26, iconSize: 12) {
                         mediaProvider.next()
                     }
                     
@@ -239,10 +255,10 @@ struct ExpandedNotchView: View {
                     
                     // Equalizer visualizer next to controls
                     AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: .white.opacity(0.85))
-                        .frame(width: 20, height: 14)
+                        .frame(width: 20, height: 13)
                         .padding(.trailing, 4)
                 }
-                .padding(.top, 4)
+                .padding(.top, 2)
             }
         }
     }
@@ -380,7 +396,7 @@ struct ExpandedNotchView: View {
     
     private func eventColor(for event: CalendarEvent) -> Color {
         if let hex = event.calendarColor, !hex.isEmpty {
-            return Color(hex: hex) ?? .blue
+            return Color.fromHex(hex) ?? .blue
         }
         return .green
     }
@@ -393,9 +409,9 @@ struct ExpandedNotchView: View {
     }
 }
 
-// Color hex extension helper
+// Color hex helper
 extension Color {
-    init?(hex: String) {
+    static func fromHex(_ hex: String) -> Color? {
         var cleanHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         if cleanHex.hasPrefix("#") { cleanHex.removeFirst() }
         guard let hexValue = UInt64(cleanHex, radix: 16) else { return nil }
@@ -414,6 +430,6 @@ extension Color {
         } else {
             return nil
         }
-        self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
+        return Color(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
 }
