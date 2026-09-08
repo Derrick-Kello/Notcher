@@ -7,6 +7,56 @@ import AppKit
 import SwiftUI
 
 @MainActor
+final class NotchHostingView<Content: View>: NSHostingView<Content> {
+    private let stateMachine: NotchStateMachine
+    private let display: DisplayDescriptor
+    
+    init(rootView: Content, stateMachine: NotchStateMachine, display: DisplayDescriptor) {
+        self.stateMachine = stateMachine
+        self.display = display
+        super.init(rootView: rootView)
+    }
+    
+    @MainActor required dynamic init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @MainActor required dynamic init(rootView: Content) {
+        fatalError("init(rootView:) has not been implemented")
+    }
+    
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        let isExpanded: Bool
+        switch stateMachine.state {
+        case .expanded, .pinned, .expanding, .temporarilyExpanded:
+            isExpanded = true
+        default:
+            isExpanded = false
+        }
+        
+        if isExpanded {
+            let expandedRect = NSRect(
+                x: (bounds.width - DisplayGeometry.openNotchSize.width) / 2.0,
+                y: bounds.height - DisplayGeometry.openNotchSize.height,
+                width: DisplayGeometry.openNotchSize.width,
+                height: DisplayGeometry.openNotchSize.height
+            )
+            return expandedRect.contains(point) ? super.hitTest(point) : nil
+        } else {
+            let width = display.hasNotch ? display.physicalNotchWidth : 160
+            let height = display.physicalNotchHeight
+            let closedRect = NSRect(
+                x: (bounds.width - width) / 2.0,
+                y: bounds.height - height,
+                width: width,
+                height: height
+            )
+            return closedRect.contains(point) ? super.hitTest(point) : nil
+        }
+    }
+}
+
+@MainActor
 final class NotchWindowController {
     
     private let environment: AppEnvironment
@@ -84,7 +134,11 @@ final class NotchWindowController {
                 widgetRegistry: environment.widgetRegistry,
                 configuration: environment.settings.configuration
             )
-            window.contentView = NSHostingView(rootView: rootView)
+            window.contentView = NotchHostingView(
+                rootView: rootView,
+                stateMachine: environment.stateMachine,
+                display: display
+            )
             
             // Position at top center of this screen
             let screenFrame = screen.frame
