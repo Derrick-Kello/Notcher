@@ -90,7 +90,7 @@ struct NotchRootView: View {
         } else {
             let width = display.hasNotch
                 ? max(140, display.physicalNotchWidth - 20)
-                : 165
+                : 175
             let height = display.physicalNotchHeight
             
             CollapsedNotchView(
@@ -121,21 +121,25 @@ struct NotchRootView: View {
                 
                 await MainActor.run {
                     guard !self.isExpanded, self.isHovering else { return }
-                    self.stateMachine.send(.toggleRequested)
+                    withAnimation(self.openAnimation) {
+                        self.stateMachine.send(.expandRequested)
+                    }
                 }
             }
         } else {
+            withAnimation(animationSpring) {
+                isHovering = false
+            }
+            
             hoverTask = Task {
-                try? await Task.sleep(nanoseconds: 120_000_000)
+                try? await Task.sleep(nanoseconds: 150_000_000)
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
-                    withAnimation(self.animationSpring) {
-                        self.isHovering = false
-                    }
-                    
-                    if self.isExpanded && self.stateMachine.state != .pinned {
-                        self.stateMachine.send(.toggleRequested)
+                    if self.isExpanded && !self.isHovering && self.stateMachine.state != .pinned {
+                        withAnimation(self.closeAnimation) {
+                            self.stateMachine.send(.collapseRequested)
+                        }
                     }
                 }
             }

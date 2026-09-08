@@ -75,16 +75,16 @@ final class NotchWindowController {
             } else {
                 let rect = NSRect(origin: .zero, size: DisplayGeometry.windowSize)
                 window = NotchPanel(contentRect: rect, screenUUID: uuid)
-                
-                let rootView = NotchRootView(
-                    stateMachine: environment.stateMachine,
-                    display: display,
-                    widgetRegistry: environment.widgetRegistry,
-                    configuration: environment.settings.configuration
-                )
-                window.contentView = NSHostingView(rootView: rootView)
                 windows[uuid] = window
             }
+            
+            let rootView = NotchRootView(
+                stateMachine: environment.stateMachine,
+                display: display,
+                widgetRegistry: environment.widgetRegistry,
+                configuration: environment.settings.configuration
+            )
+            window.contentView = NSHostingView(rootView: rootView)
             
             // Position at top center of this screen
             let screenFrame = screen.frame

@@ -19,6 +19,8 @@ enum NotchEvent: Sendable, Equatable {
     
     // Programmatic
     case toggleRequested
+    case expandRequested
+    case collapseRequested
     case pinRequested
     case unpinRequested
     

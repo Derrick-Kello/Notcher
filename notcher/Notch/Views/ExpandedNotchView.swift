@@ -16,15 +16,23 @@ struct ExpandedNotchView: View {
     @State private var batteryProvider = SystemBatteryProvider.shared
     @State private var calendarProvider = SystemCalendarProvider.shared
     
-    @State private var progressValue: Double = 0.35
     @State private var isDraggingSlider: Bool = false
+    @State private var dragProgress: Double = 0
     @State private var selectedDate = Date()
+    
+    private var progressValue: Double {
+        if isDraggingSlider {
+            return dragProgress
+        }
+        guard let item = mediaProvider.currentItem, item.duration > 0 else { return 0 }
+        return max(0, min(item.elapsedTime / item.duration, 1.0))
+    }
     
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Header Bar matching BoringHeader
             headerBar
-                .frame(height: 30)
+                .frame(height: 28)
                 .padding(.bottom, 6)
             
             // MARK: - Main Content: Music Player (Left) + Calendar (Right)
@@ -35,14 +43,14 @@ struct ExpandedNotchView: View {
                 calendarSection
                     .frame(width: 215)
             }
-            .frame(height: 130)
+            .frame(height: 132)
             
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 14)
-        .padding(.top, 6)
+        .padding(.top, 4)
         .padding(.bottom, 12)
-        .frame(width: DisplayGeometry.openNotchSize.width - 24, height: DisplayGeometry.openNotchSize.height - 12)
+        .frame(width: DisplayGeometry.openNotchSize.width - 24, height: DisplayGeometry.openNotchSize.height - 10)
     }
     
     // MARK: - Header Bar
@@ -51,18 +59,18 @@ struct ExpandedNotchView: View {
             // Left side
             HStack(spacing: 6) {
                 Circle()
-                    .fill(Color.white.opacity(0.15))
+                    .fill(Color.white.opacity(0.2))
                     .frame(width: 7, height: 7)
                 Text("Notcher")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.white.opacity(0.6))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
             // Center camera cutout clearance
             Rectangle()
                 .fill(display.hasNotch ? Color.black : Color.clear)
-                .frame(width: display.physicalNotchWidth)
+                .frame(width: max(0, display.physicalNotchWidth - 10))
             
             // Right side: Settings & Battery
             HStack(spacing: 8) {
@@ -115,21 +123,29 @@ struct ExpandedNotchView: View {
         HStack(alignment: .center, spacing: 14) {
             // Album Artwork (90 x 90)
             ZStack(alignment: .bottomTrailing) {
-                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .fill(Color(white: 0.16))
-                    .frame(width: 90, height: 90)
-                    .overlay {
-                        Image(systemName: "music.note")
-                            .font(.system(size: 34))
-                            .foregroundColor(.white.opacity(0.25))
-                    }
+                if let artwork = mediaProvider.artworkImage {
+                    Image(nsImage: artwork)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 90, height: 90)
+                        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                } else {
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(Color(white: 0.16))
+                        .frame(width: 90, height: 90)
+                        .overlay {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 34))
+                                .foregroundColor(.white.opacity(0.25))
+                        }
+                }
                 
                 // App Badge Icon
                 Circle()
                     .fill(Color.black)
                     .frame(width: 22, height: 22)
                     .overlay {
-                        Image(systemName: "play.circle.fill")
+                        Image(systemName: mediaProvider.isPlaying ? "play.circle.fill" : "music.note.circle.fill")
                             .font(.system(size: 14))
                             .foregroundColor(.white)
                     }
@@ -163,16 +179,34 @@ struct ExpandedNotchView: View {
                                 .fill(Color.white)
                                 .frame(width: max(0, min(geo.size.width * CGFloat(progressValue), geo.size.width)), height: 4)
                         }
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { value in
+                                    isDraggingSlider = true
+                                    let newProgress = max(0, min(value.location.x / geo.size.width, 1.0))
+                                    dragProgress = newProgress
+                                }
+                                .onEnded { value in
+                                    let finalProgress = max(0, min(value.location.x / geo.size.width, 1.0))
+                                    if let duration = mediaProvider.currentItem?.duration, duration > 0 {
+                                        mediaProvider.seek(to: duration * finalProgress)
+                                    }
+                                    isDraggingSlider = false
+                                }
+                        )
                     }
-                    .frame(height: 4)
+                    .frame(height: 6)
                     .padding(.top, 4)
                     
                     HStack {
-                        Text(timeString(from: (mediaProvider.currentItem?.duration ?? 0) * progressValue))
+                        let duration = mediaProvider.currentItem?.duration ?? 0
+                        let currentElapsed = isDraggingSlider ? (duration * dragProgress) : (mediaProvider.currentItem?.elapsedTime ?? 0)
+                        Text(timeString(from: currentElapsed))
                             .font(.system(size: 9, weight: .regular, design: .monospaced))
                             .foregroundColor(.white.opacity(0.45))
                         Spacer()
-                        Text(timeString(from: mediaProvider.currentItem?.duration ?? 0))
+                        Text(timeString(from: duration))
                             .font(.system(size: 9, weight: .regular, design: .monospaced))
                             .foregroundColor(.white.opacity(0.45))
                     }
@@ -180,9 +214,7 @@ struct ExpandedNotchView: View {
                 .padding(.top, 2)
                 
                 // Playback Buttons Toolbar
-                HStack(spacing: 16) {
-                    HoverButton(icon: "shuffle", iconColor: .white.opacity(0.6), size: 28, iconSize: 12) {}
-                    
+                HStack(spacing: 14) {
                     HoverButton(icon: "backward.fill", iconColor: .white.opacity(0.8), size: 28, iconSize: 13) {
                         mediaProvider.previous()
                     }
@@ -203,104 +235,185 @@ struct ExpandedNotchView: View {
                         mediaProvider.next()
                     }
                     
-                    HoverButton(icon: "speaker.wave.2.fill", iconColor: .white.opacity(0.6), size: 28, iconSize: 12) {}
+                    Spacer()
+                    
+                    // Equalizer visualizer next to controls
+                    AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: .white.opacity(0.85))
+                        .frame(width: 20, height: 14)
+                        .padding(.trailing, 4)
                 }
-                .padding(.top, 2)
+                .padding(.top, 4)
             }
         }
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.white.opacity(0.06))
-        )
     }
     
-    // MARK: - Calendar Section (Matching BoringNotch CalendarView)
+    // MARK: - Calendar Section (Matching BoringNotch CalendarView - 215pt)
     private var calendarSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Month & Year
+            // Header: Month & Year
             HStack {
-                Text(Date().formatted(.dateTime.month(.abbreviated).year()))
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                Text(currentMonthYearString)
+                    .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.white)
+                
                 Spacer()
-                Text(Date().formatted(.dateTime.weekday(.wide)))
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.5))
+                
+                HStack(spacing: 4) {
+                    HoverButton(icon: "chevron.left", iconColor: .white.opacity(0.6), size: 18, iconSize: 9) {
+                        shiftDay(by: -1)
+                    }
+                    HoverButton(icon: "chevron.right", iconColor: .white.opacity(0.6), size: 18, iconSize: 9) {
+                        shiftDay(by: 1)
+                    }
+                }
             }
             
-            // Mini Day Picker Pill
+            // 5-Day Horizontal Date Wheel
             HStack(spacing: 6) {
-                ForEach(-2...2, id: \.self) { dayOffset in
-                    let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: Date()) ?? Date()
-                    let isToday = dayOffset == 0
+                ForEach(surroundingDays, id: \.self) { date in
+                    let isSelected = Calendar.current.isDate(date, inSameDayAs: selectedDate)
+                    let isToday = Calendar.current.isDateInToday(date)
                     
                     VStack(spacing: 2) {
-                        Text(date.formatted(.dateTime.weekday(.narrow)))
+                        Text(weekdayString(from: date))
                             .font(.system(size: 8, weight: .semibold))
-                            .foregroundColor(isToday ? .white : .white.opacity(0.45))
+                            .foregroundColor(isSelected ? .black.opacity(0.8) : .white.opacity(0.45))
                         
-                        Text(date.formatted(.dateTime.day()))
-                            .font(.system(size: 11, weight: isToday ? .bold : .medium, design: .rounded))
-                            .foregroundColor(isToday ? .white : .white.opacity(0.75))
+                        Text(dayNumberString(from: date))
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(isSelected ? .black : (isToday ? .green : .white))
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
-                    .background(isToday ? Color.accentColor : Color.clear)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-            }
-            .padding(4)
-            .background(Color.white.opacity(0.05))
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            
-            // Events List or Empty State
-            if calendarProvider.upcomingEvents.isEmpty {
-                VStack(spacing: 2) {
-                    Spacer(minLength: 0)
-                    HStack(spacing: 6) {
-                        Image(systemName: "calendar.badge.clock")
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.4))
-                        Text("No upcoming events")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                    Spacer(minLength: 0)
-                }
-                .frame(maxWidth: .infinity)
-            } else {
-                VStack(alignment: .leading, spacing: 3) {
-                    ForEach(calendarProvider.upcomingEvents.prefix(2)) { event in
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(Color.accentColor)
-                                .frame(width: 4, height: 4)
-                            Text(event.title)
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                            Spacer()
-                            Text(event.startDate.formatted(date: .omitted, time: .shortened))
-                                .font(.system(size: 9))
-                                .foregroundColor(.white.opacity(0.5))
+                    .frame(width: 32, height: 38)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(isSelected ? Color.white : (isToday ? Color.white.opacity(0.12) : Color.white.opacity(0.04)))
+                    )
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            selectedDate = date
                         }
                     }
                 }
-                .padding(.top, 2)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+            // Upcoming Events List
+            VStack(alignment: .leading, spacing: 3) {
+                if calendarProvider.upcomingEvents.isEmpty {
+                    HStack(spacing: 6) {
+                        Image(systemName: "calendar.badge.clock")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.3))
+                        Text("No events today")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+                    .padding(.top, 4)
+                } else {
+                    ForEach(calendarProvider.upcomingEvents.prefix(2)) { event in
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(eventColor(for: event))
+                                .frame(width: 5, height: 5)
+                            
+                            Text(event.title)
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.9))
+                                .lineLimit(1)
+                            
+                            Spacer(minLength: 4)
+                            
+                            Text(eventTimeString(for: event))
+                                .font(.system(size: 9, weight: .regular))
+                                .foregroundColor(.white.opacity(0.4))
+                        }
+                    }
+                }
+            }
+            .padding(.top, 2)
         }
         .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
                 .fill(Color.white.opacity(0.06))
         )
     }
     
-    private func timeString(from seconds: Double) -> String {
-        let total = max(0, Int(seconds))
-        let minutes = total / 60
-        let secs = total % 60
-        return String(format: "%d:%02d", minutes, secs)
+    // MARK: - Date Helpers
+    private var currentMonthYearString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: selectedDate)
+    }
+    
+    private var surroundingDays: [Date] {
+        let cal = Calendar.current
+        return (-2...2).compactMap { cal.date(byAdding: .day, value: $0, to: selectedDate) }
+    }
+    
+    private func shiftDay(by offset: Int) {
+        if let newDate = Calendar.current.date(byAdding: .day, value: offset, to: selectedDate) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedDate = newDate
+            }
+        }
+    }
+    
+    private func weekdayString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter.string(from: date).uppercased()
+    }
+    
+    private func dayNumberString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
+    }
+    
+    private func eventTimeString(for event: CalendarEvent) -> String {
+        if event.isAllDay { return "All Day" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: event.startDate)
+    }
+    
+    private func eventColor(for event: CalendarEvent) -> Color {
+        if let hex = event.calendarColor, !hex.isEmpty {
+            return Color(hex: hex) ?? .blue
+        }
+        return .green
+    }
+    
+    private func timeString(from interval: TimeInterval) -> String {
+        let safeInterval = max(0, interval)
+        let minutes = Int(safeInterval) / 60
+        let seconds = Int(safeInterval) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
+// Color hex extension helper
+extension Color {
+    init?(hex: String) {
+        var cleanHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleanHex.hasPrefix("#") { cleanHex.removeFirst() }
+        guard let hexValue = UInt64(cleanHex, radix: 16) else { return nil }
+        
+        let r, g, b, a: Double
+        if cleanHex.count == 6 {
+            r = Double((hexValue & 0xFF0000) >> 16) / 255.0
+            g = Double((hexValue & 0x00FF00) >> 8) / 255.0
+            b = Double(hexValue & 0x0000FF) / 255.0
+            a = 1.0
+        } else if cleanHex.count == 8 {
+            r = Double((hexValue & 0xFF000000) >> 24) / 255.0
+            g = Double((hexValue & 0x00FF0000) >> 16) / 255.0
+            b = Double((hexValue & 0x0000FF00) >> 8) / 255.0
+            a = Double(hexValue & 0x000000FF) / 255.0
+        } else {
+            return nil
+        }
+        self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
 }

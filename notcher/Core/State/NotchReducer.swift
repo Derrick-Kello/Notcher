@@ -22,15 +22,25 @@ enum NotchReducer {
     static func reduce(state: NotchState, event: NotchEvent) -> (NotchState, NotchSideEffect) {
         switch (state, event) {
         
+        // Direct programmatic commands
+        case (_, .expandRequested):
+            return (.expanded, .none)
+            
+        case (.pinned, .collapseRequested):
+            return (.pinned, .none) // Pinned prevents collapsing
+            
+        case (_, .collapseRequested):
+            return (.collapsed, .none)
+        
         // From collapsed
         case (.collapsed, .mouseEntered):
             return (.hovering, .startHoverTimer)
         case (.collapsed, .toggleRequested):
-            return (.expanding, .animateExpansion)
+            return (.expanded, .none)
             
         // From hovering
         case (.hovering, .timeout):
-            return (.expanding, .animateExpansion)
+            return (.expanded, .none)
         case (.hovering, .mouseExited):
             return (.collapsed, .cancelHoverTimer)
             
@@ -40,13 +50,13 @@ enum NotchReducer {
             
         // From expanded
         case (.expanded, .mouseExited):
-            return (.collapsing, .animateCollapse)
+            return (.collapsed, .none)
         case (.expanded, .clicked):
             return (.pinned, .none)
         case (.expanded, .toggleRequested):
-            return (.collapsing, .animateCollapse)
+            return (.collapsed, .none)
         case (.expanded, .timeout):
-            return (.collapsing, .animateCollapse)
+            return (.collapsed, .none)
             
         // From pinned
         case (.pinned, .clicked):
@@ -54,25 +64,23 @@ enum NotchReducer {
         case (.pinned, .unpinRequested):
             return (.expanded, .none)
         case (.pinned, .escapePressed):
-            return (.collapsing, .animateCollapse)
+            return (.collapsed, .none)
         case (.pinned, .toggleRequested):
-            return (.collapsing, .animateCollapse)
+            return (.collapsed, .none)
             
         // Pin requested from any open state
-        case (.expanded, .pinRequested), (.expanding, .pinRequested), (.temporarilyExpanded, .pinRequested):
-            return (.pinned, .none)
         case (_, .pinRequested):
             return (.pinned, .none)
             
         // From collapsing
         case (.collapsing, .mouseEntered):
-            return (.expanding, .animateExpansion)
+            return (.expanded, .none)
         case (.collapsing, .collapseCompleted):
             return (.collapsed, .none)
             
         // Display changes force collapse
         case (_, .displayChanged):
-            return (.collapsed, .animateCollapse)
+            return (.collapsed, .none)
             
         // Default (unhandled transitions remain in the same state with no effects)
         default:
