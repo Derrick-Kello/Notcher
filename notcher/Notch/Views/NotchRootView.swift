@@ -11,7 +11,6 @@ struct NotchRootView: View {
     var widgetRegistry: WidgetRegistry
     var configuration: NotchConfiguration
     
-    @State private var mediaProvider = SystemMediaProvider.shared
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false
     
@@ -43,16 +42,12 @@ struct NotchRootView: View {
         )
     }
     
-    private var closedNotchWidth: CGFloat {
-        let hasActiveMedia = mediaProvider.currentItem != nil
-        if display.hasNotch {
-            let artSize = max(14, display.physicalNotchHeight - 12)
-            // When music is active, expand width so wings with album art & equalizer stick out past physical notch
-            return hasActiveMedia
-                ? (display.physicalNotchWidth + (artSize * 2) + 20)
-                : max(140, display.physicalNotchWidth - 20)
+    private var currentNotchWidth: CGFloat {
+        if isExpanded {
+            return DisplayGeometry.openNotchSize.width
         } else {
-            return hasActiveMedia ? 340 : 175
+            // Strictly the physical notch width — nothing wider than the notch
+            return display.hasNotch ? display.physicalNotchWidth : 160
         }
     }
     
@@ -60,9 +55,11 @@ struct NotchRootView: View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 let mainLayout = notchContent
-                    .frame(alignment: .top)
-                    .padding(.horizontal, isExpanded ? 19 : 14)
-                    .padding([.horizontal, .bottom], isExpanded ? 12 : 0)
+                    .frame(
+                        width: currentNotchWidth,
+                        height: isExpanded ? DisplayGeometry.openNotchSize.height : display.physicalNotchHeight,
+                        alignment: .top
+                    )
                     .background(Color.black)
                     .clipShape(currentNotchShape)
                     .overlay(alignment: .top) {
@@ -75,11 +72,11 @@ struct NotchRootView: View {
                         color: (isExpanded || isHovering) ? Color.black.opacity(0.7) : Color.clear,
                         radius: isExpanded ? 6 : 4
                     )
+                    .contentShape(currentNotchShape)
                 
                 mainLayout
-                    .frame(height: isExpanded ? DisplayGeometry.openNotchSize.height : nil)
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
-                    .animation(animationSpring, value: closedNotchWidth)
+                    .animation(animationSpring, value: currentNotchWidth)
                     .onHover { hovering in
                         handleHover(hovering)
                     }
@@ -104,8 +101,7 @@ struct NotchRootView: View {
                 display: display,
                 configuration: configuration
             )
-            .frame(width: closedNotchWidth, height: display.physicalNotchHeight)
-            .contentShape(Rectangle())
+            .contentShape(currentNotchShape)
             .onTapGesture {
                 withAnimation(animationSpring) {
                     stateMachine.send(.expandRequested)
