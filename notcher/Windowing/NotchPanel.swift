@@ -8,12 +8,14 @@ import SwiftUI
 
 @MainActor
 final class NotchPanel: NSPanel {
-    weak var stateMachine: NotchStateMachine?
+    let screenUUID: String
 
-    init() {
+    init(contentRect: NSRect, screenUUID: String = "") {
+        self.screenUUID = screenUUID
+        let styleMask: NSWindow.StyleMask = [.borderless, .nonactivatingPanel, .utilityWindow, .hudWindow]
         super.init(
-            contentRect: NSRect(origin: .zero, size: DisplayGeometry.windowSize),
-            styleMask: [.borderless, .nonactivatingPanel],
+            contentRect: contentRect,
+            styleMask: styleMask,
             backing: .buffered,
             defer: false
         )
@@ -40,11 +42,6 @@ final class NotchPanel: NSPanel {
         self.ignoresMouseEvents = false
     }
     
-    override var canBecomeKey: Bool {
-        false
-    }
-    
-    override var canBecomeMain: Bool {
-        false
-    }
+    override var canBecomeKey: Bool { false }
+    override var canBecomeMain: Bool { false }
 }

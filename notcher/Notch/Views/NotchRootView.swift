@@ -7,15 +7,16 @@ import SwiftUI
 
 struct NotchRootView: View {
     var stateMachine: NotchStateMachine
-    var displayManager: DisplayManager
+    var display: DisplayDescriptor
     var widgetRegistry: WidgetRegistry
     var configuration: NotchConfiguration
     
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false
     
-    // Smooth interactive spring matching BoringNotch
-    private let springAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
+    private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
+    private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
+    private let animationSpring = Animation.interactiveSpring(response: 0.38, dampingFraction: 0.8, blendDuration: 0)
     
     private var isExpanded: Bool {
         switch stateMachine.state {
@@ -26,88 +27,124 @@ struct NotchRootView: View {
         }
     }
     
+    private var topCornerRadius: CGFloat {
+        isExpanded ? 19 : 6
+    }
+    
+    private var bottomCornerRadius: CGFloat {
+        isExpanded ? 24 : 14
+    }
+    
+    private var currentNotchShape: NotchShape {
+        NotchShape(
+            topCornerRadius: topCornerRadius,
+            bottomCornerRadius: bottomCornerRadius
+        )
+    }
+    
     var body: some View {
-        let display = displayManager.activeDisplay ?? displayManager.resolveActiveDisplay()
-        let closedSize = display != nil
-            ? DisplayGeometry.closedNotchSize(for: display!, config: configuration)
-            : CGSize(width: 185, height: 32)
-        
-        let openSize = DisplayGeometry.openNotchSize
-        let currentWidth = isExpanded ? openSize.width : closedSize.width
-        let currentHeight = isExpanded ? openSize.height : closedSize.height
-        
-        let topRadius = isExpanded ? DisplayGeometry.openCornerRadii.top : DisplayGeometry.closedCornerRadii.top
-        let bottomRadius = isExpanded ? DisplayGeometry.openCornerRadii.bottom : DisplayGeometry.closedCornerRadii.bottom
-        
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
-                ZStack(alignment: .top) {
-                    if isExpanded {
-                        ExpandedNotchView(
-                            stateMachine: stateMachine,
-                            widgetRegistry: widgetRegistry,
-                            configuration: configuration
-                        )
-                        .transition(.opacity)
-                    } else {
-                        CollapsedNotchView(
-                            stateMachine: stateMachine,
-                            configuration: configuration
-                        )
-                        .transition(.opacity)
+                let mainLayout = notchContent
+                    .frame(alignment: .top)
+                    .padding(.horizontal, isExpanded ? 19 : 14)
+                    .padding([.horizontal, .bottom], isExpanded ? 12 : 0)
+                    .background(Color.black)
+                    .clipShape(currentNotchShape)
+                    .overlay(alignment: .top) {
+                        Rectangle()
+                            .fill(Color.black)
+                            .frame(height: 1)
+                            .padding(.horizontal, topCornerRadius)
                     }
-                }
-                .frame(width: currentWidth, height: currentHeight, alignment: .top)
-                .background(Color.black)
-                .clipShape(NotchShape(topCornerRadius: topRadius, bottomCornerRadius: bottomRadius))
-                .shadow(color: isExpanded ? Color.black.opacity(0.6) : (isHovering ? Color.black.opacity(0.3) : Color.clear), radius: isExpanded ? 10 : 4, y: isExpanded ? 4 : 1)
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    handleHover(hovering)
-                }
-                .onTapGesture {
-                    handleTap()
-                }
+                    .shadow(
+                        color: (isExpanded || isHovering) ? Color.black.opacity(0.7) : Color.clear,
+                        radius: isExpanded ? 6 : 4
+                    )
+                
+                mainLayout
+                    .frame(height: isExpanded ? DisplayGeometry.openNotchSize.height : nil)
+                    .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
+                    .contentShape(Rectangle())
+                    .onHover { hovering in
+                        handleHover(hovering)
+                    }
+                    .onTapGesture {
+                        handleTap()
+                    }
             }
         }
         .frame(maxWidth: DisplayGeometry.windowSize.width, maxHeight: DisplayGeometry.windowSize.height, alignment: .top)
-        .animation(springAnimation, value: isExpanded)
+    }
+    
+    @ViewBuilder
+    private var notchContent: some View {
+        if isExpanded {
+            ExpandedNotchView(
+                stateMachine: stateMachine,
+                display: display,
+                widgetRegistry: widgetRegistry,
+                configuration: configuration
+            )
+            .transition(.opacity)
+        } else {
+            let width = display.hasNotch
+                ? max(140, display.physicalNotchWidth - 20)
+                : 165
+            let height = display.physicalNotchHeight
+            
+            CollapsedNotchView(
+                stateMachine: stateMachine,
+                display: display,
+                configuration: configuration
+            )
+            .frame(width: width, height: height)
+            .transition(.opacity)
+        }
     }
     
     private func handleHover(_ hovering: Bool) {
         hoverTask?.cancel()
-        isHovering = hovering
         
         if hovering {
+            withAnimation(animationSpring) {
+                isHovering = true
+            }
+            
             guard !isExpanded else { return }
             guard configuration.hoverEnabled else { return }
             
             hoverTask = Task {
-                let delay = max(0.08, configuration.hoverDelay)
+                let delay = max(0.05, configuration.hoverDelay)
                 try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
-                    guard !self.isExpanded else { return }
+                    guard !self.isExpanded, self.isHovering else { return }
                     self.stateMachine.send(.toggleRequested)
                 }
             }
         } else {
-            guard isExpanded, stateMachine.state != .pinned else { return }
-            
             hoverTask = Task {
-                try? await Task.sleep(nanoseconds: 120_000_000) // 120ms grace period
+                try? await Task.sleep(nanoseconds: 120_000_000)
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
-                    guard self.isExpanded, self.stateMachine.state != .pinned else { return }
-                    self.stateMachine.send(.toggleRequested)
+                    withAnimation(self.animationSpring) {
+                        self.isHovering = false
+                    }
+                    
+                    if self.isExpanded && self.stateMachine.state != .pinned {
+                        self.stateMachine.send(.toggleRequested)
+                    }
                 }
             }
         }
     }
     
     private func handleTap() {
-        stateMachine.send(.toggleRequested)
+        withAnimation(animationSpring) {
+            stateMachine.send(.toggleRequested)
+        }
     }
 }

@@ -1,0 +1,10 @@
+# Build and Derived Data
+build/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# OS and temporary files
+.DS_Store
+*.swp
+*~

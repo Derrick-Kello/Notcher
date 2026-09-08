@@ -9,31 +9,14 @@ import SwiftUI
 @MainActor
 final class NotchWindowController {
     
-    private let panel: NotchPanel
     private let environment: AppEnvironment
-    private var activeDisplay: DisplayDescriptor?
+    private var windows: [String: NotchPanel] = [:]
     private var observers: [NSObjectProtocol] = []
     
     init(environment: AppEnvironment) {
         self.environment = environment
-        self.panel = NotchPanel()
-        self.panel.stateMachine = environment.stateMachine
-        
-        let rootView = NotchRootView(
-            stateMachine: environment.stateMachine,
-            displayManager: environment.displayManager,
-            widgetRegistry: environment.widgetRegistry,
-            configuration: environment.settings.configuration
-        )
-        
-        let hostingView = NSHostingView(rootView: rootView)
-        panel.contentView = hostingView
-        
         setupScreenNotifications()
-        
-        if let display = environment.displayManager.resolveActiveDisplay() {
-            updateForDisplay(display)
-        }
+        adjustWindows()
     }
     
     private func setupScreenNotifications() {
@@ -43,10 +26,7 @@ final class NotchWindowController {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            guard let self = self else { return }
-            if let display = self.environment.displayManager.resolveActiveDisplay() {
-                self.updateForDisplay(display)
-            }
+            self?.adjustWindows()
         })
         
         let wsCenter = NSWorkspace.shared.notificationCenter
@@ -55,36 +35,80 @@ final class NotchWindowController {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            guard let self = self else { return }
-            if let display = self.environment.displayManager.resolveActiveDisplay() {
-                self.updateForDisplay(display)
-            }
+            self?.adjustWindows()
         })
     }
     
     func show() {
-        panel.orderFrontRegardless()
-        updatePosition()
+        for window in windows.values {
+            window.orderFrontRegardless()
+            NotchSpaceManager.shared.notchSpace.windows.insert(window)
+        }
     }
     
     func hide() {
-        panel.orderOut(nil)
+        for window in windows.values {
+            window.orderOut(nil)
+            NotchSpaceManager.shared.notchSpace.windows.remove(window)
+        }
     }
     
-    func updatePosition() {
-        guard let display = activeDisplay ?? environment.displayManager.resolveActiveDisplay() else { return }
-        activeDisplay = display
+    func adjustWindows() {
+        let currentScreens = NSScreen.screens
+        let currentUUIDs = Set(currentScreens.compactMap { screenUUID($0) })
         
-        let frame = DisplayGeometry.windowFrame(for: display)
-        panel.setFrame(frame, display: true)
+        // Remove windows for disconnected screens
+        for (uuid, window) in windows where !currentUUIDs.contains(uuid) {
+            window.close()
+            NotchSpaceManager.shared.notchSpace.windows.remove(window)
+            windows.removeValue(forKey: uuid)
+        }
+        
+        // Create or update window for each connected screen
+        for screen in currentScreens {
+            let uuid = screenUUID(screen)
+            let display = DisplayDescriptor.from(screen: screen)
+            
+            let window: NotchPanel
+            if let existing = windows[uuid] {
+                window = existing
+            } else {
+                let rect = NSRect(origin: .zero, size: DisplayGeometry.windowSize)
+                window = NotchPanel(contentRect: rect, screenUUID: uuid)
+                
+                let rootView = NotchRootView(
+                    stateMachine: environment.stateMachine,
+                    display: display,
+                    widgetRegistry: environment.widgetRegistry,
+                    configuration: environment.settings.configuration
+                )
+                window.contentView = NSHostingView(rootView: rootView)
+                windows[uuid] = window
+            }
+            
+            // Position at top center of this screen
+            let screenFrame = screen.frame
+            let originX = screenFrame.origin.x + (screenFrame.width - DisplayGeometry.windowSize.width) / 2.0
+            let originY = screenFrame.origin.y + screenFrame.height - DisplayGeometry.windowSize.height
+            window.setFrame(NSRect(x: originX, y: originY, width: DisplayGeometry.windowSize.width, height: DisplayGeometry.windowSize.height), display: true)
+            
+            window.orderFrontRegardless()
+            NotchSpaceManager.shared.notchSpace.windows.insert(window)
+        }
     }
     
-    func updateForDisplay(_ display: DisplayDescriptor) {
-        self.activeDisplay = display
-        updatePosition()
+    private func screenUUID(_ screen: NSScreen) -> String {
+        if let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID {
+            return String(id)
+        }
+        return "\(screen.frame.origin.x)_\(screen.frame.origin.y)"
     }
     
     deinit {
         observers.forEach { NotificationCenter.default.removeObserver($0) }
+        for window in windows.values {
+            window.close()
+            NotchSpaceManager.shared.notchSpace.windows.remove(window)
+        }
     }
 }
