@@ -38,8 +38,6 @@ final class NotchPanel: NSPanel {
         ]
         
         self.appearance = NSAppearance(named: .darkAqua)
-        self.acceptsMouseMovedEvents = true
-        self.ignoresMouseEvents = false
     }
     
     override var canBecomeKey: Bool { false }
