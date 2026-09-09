@@ -21,7 +21,7 @@ struct CollapsedNotchView: View {
         let height = display.physicalNotchHeight
         let artSize: CGFloat = max(16, min(24, height - 14))
         let themeColor = configuration.theme.primaryColor(dynamicArtworkColor: mediaProvider.dynamicColor)
-        let notchWidth = display.hoverNotchWidth
+        let notchWidth = display.physicalNotchWidth
         
         if display.hasNotch {
             if hasActiveMedia {
@@ -41,9 +41,9 @@ struct CollapsedNotchView: View {
                                 .frame(width: artSize, height: artSize)
                         }
                     }
-                    .frame(width: 30, height: height, alignment: .center)
+                    .frame(width: 36, height: height, alignment: .center)
                     
-                    // Center Clearance
+                    // Center Clearance: Perfectly spans physical MacBook hardware notch
                     Spacer(minLength: 0)
                         .frame(width: notchWidth)
                     
@@ -52,9 +52,9 @@ struct CollapsedNotchView: View {
                         AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                             .frame(width: 16, height: 11)
                     }
-                    .frame(width: 30, height: height, alignment: .center)
+                    .frame(width: 36, height: height, alignment: .center)
                 }
-                .frame(width: notchWidth + 60, height: height)
+                .frame(width: notchWidth + 72, height: height)
             } else {
                 Color.clear
                     .frame(width: notchWidth, height: height)
@@ -85,11 +85,11 @@ struct CollapsedNotchView: View {
                     AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                         .frame(width: 16, height: 11)
                 }
-                .padding(.horizontal, 8)
-                .frame(width: 220, height: height)
+                .padding(.horizontal, 10)
+                .frame(width: 260, height: height)
             } else {
                 Color.clear
-                    .frame(width: 130, height: height)
+                    .frame(width: 160, height: height)
             }
         }
     }

@@ -53,7 +53,11 @@ struct NotchRootView: View {
         if isExpanded {
             return DisplayGeometry.openNotchSize.width
         } else {
-            return hasActiveMedia ? (display.hoverNotchWidth + 60) : display.hoverNotchWidth
+            if display.hasNotch {
+                return hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
+            } else {
+                return hasActiveMedia ? 260 : 160
+            }
         }
     }
     
