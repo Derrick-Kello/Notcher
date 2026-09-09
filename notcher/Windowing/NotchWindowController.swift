@@ -48,10 +48,35 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
             self?.checkMousePosition(NSEvent.mouseLocation)
             return event
         }
+        
+        // Update tracking areas when notch expands or collapses
+        NotificationCenter.default.addObserver(
+            forName: .notchMouseEntered,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateTrackingAreas()
+        }
+        NotificationCenter.default.addObserver(
+            forName: .notchMouseExited,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateTrackingAreas()
+        }
     }
     
     private func checkMousePosition(_ screenPoint: NSPoint) {
-        guard let window = self.window else { return }
+        guard let window = self.window,
+              let screen = window.screen,
+              screen.frame.contains(screenPoint) else {
+            if isHoveredInsideNotch {
+                isHoveredInsideNotch = false
+                NotificationCenter.default.post(name: .notchMouseExited, object: nil)
+            }
+            return
+        }
+        
         let screenRect = currentNotchScreenRect(for: window)
         let isInside = screenRect.contains(screenPoint)
         
@@ -69,9 +94,10 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
         if let old = trackingAreaRef {
             removeTrackingArea(old)
         }
+        let rect = currentNotchViewRect()
         let area = NSTrackingArea(
-            rect: bounds,
-            options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+            rect: rect,
+            options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways],
             owner: self,
             userInfo: nil
         )
@@ -94,12 +120,8 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
             width = DisplayGeometry.openNotchSize.width
             height = DisplayGeometry.openNotchSize.height
         } else {
-            let hasMedia = SystemMediaProvider.shared.isAvailable && SystemMediaProvider.shared.currentItem != nil
-            if display.hasNotch {
-                width = hasMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
-            } else {
-                width = hasMedia ? 260 : 160
-            }
+            // Strictly the physical hardware notch cutout when collapsed - NO extra width
+            width = display.hasNotch ? display.physicalNotchWidth : 160
             height = display.physicalNotchHeight
         }
         
@@ -134,10 +156,7 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
     
     override func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
-        if isHoveredInsideNotch {
-            isHoveredInsideNotch = false
-            NotificationCenter.default.post(name: .notchMouseExited, object: nil)
-        }
+        checkMousePosition(NSEvent.mouseLocation)
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {
