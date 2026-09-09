@@ -49,7 +49,7 @@ struct MenuBarView: View {
             Divider()
             
             Button("Settings...") {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                SettingsWindowController.shared.showWindow()
             }
             .keyboardShortcut(",", modifiers: .command)
             

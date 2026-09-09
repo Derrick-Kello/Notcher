@@ -111,7 +111,7 @@ struct ExpandedNotchView: View {
                     size: 26,
                     iconSize: 11
                 ) {
-                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                    SettingsWindowController.shared.showWindow()
                 }
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
