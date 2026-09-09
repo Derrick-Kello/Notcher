@@ -6,37 +6,41 @@
 import Foundation
 
 final class AppleScriptHelper: Sendable {
-    /// Executes an AppleScript on the main thread (required for NSAppleScript reliability).
-    /// Returns the result descriptor, or throws on error.
+    /// Executes an AppleScript command asynchronously using /usr/bin/osascript.
+    /// This bypasses in-process AppleEvents sandbox/thread-safety restrictions.
     @discardableResult
     class func execute(_ scriptText: String) async throws -> NSAppleEventDescriptor? {
-        try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.main.async {
-                let script = NSAppleScript(source: scriptText)
-                var error: NSDictionary?
-                let descriptor = script?.executeAndReturnError(&error)
-                if let descriptor = descriptor {
-                    continuation.resume(returning: descriptor)
-                } else if let error = error {
-                    let code = (error[NSAppleScript.errorNumber] as? Int) ?? 1
-                    let message = (error[NSAppleScript.errorMessage] as? String) ?? "Unknown AppleScript error"
-                    continuation.resume(throwing: NSError(
-                        domain: "AppleScriptError",
-                        code: code,
-                        userInfo: [NSLocalizedDescriptionKey: message]
-                    ))
-                } else {
-                    continuation.resume(throwing: NSError(
-                        domain: "AppleScriptError",
-                        code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "NSAppleScript returned nil without error"]
-                    ))
-                }
+        return try await Task.detached(priority: .userInitiated) {
+            let script = NSAppleScript(source: scriptText)
+            var error: NSDictionary?
+            if let descriptor = script?.executeAndReturnError(&error) {
+                return descriptor
             }
-        }
+            
+            // Reliable fallback: osascript process
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+            process.arguments = ["-e", scriptText]
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            try? process.run()
+            process.waitUntilExit()
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            if let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !output.isEmpty {
+                return NSAppleEventDescriptor(string: output)
+            }
+            return nil
+        }.value
     }
     
-    class func executeVoid(_ scriptText: String) async {
-        _ = try? await execute(scriptText)
+    /// Executes a fire-and-forget AppleScript command without blocking.
+    class func executeVoid(_ scriptText: String) {
+        Task.detached(priority: .userInitiated) {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+            process.arguments = ["-e", scriptText]
+            try? process.run()
+            process.waitUntilExit()
+        }
     }
 }

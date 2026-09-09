@@ -502,43 +502,33 @@ final class SystemMediaProvider: NowPlayingProvider {
     // MARK: - Playback Controls
     func playPause() {
         let appName = activeSource == .spotify ? "Spotify" : "Music"
-        isPlaying.toggle()
-        updatePlaybackTicker()
-        Task {
-            await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to playpause")
-        }
+        AppleScriptHelper.executeVoid("""
+        tell application "\(appName)"
+            if player state is playing then
+                pause
+            else
+                play
+            end if
+        end tell
+        """)
     }
     
     func next() {
         let appName = activeSource == .spotify ? "Spotify" : "Music"
-        Task {
-            await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to next track")
-        }
+        AppleScriptHelper.executeVoid("tell application \"\(appName)\" to next track")
     }
     
     func previous() {
         let appName = activeSource == .spotify ? "Spotify" : "Music"
-        Task {
-            await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to previous track")
-        }
+        AppleScriptHelper.executeVoid("tell application \"\(appName)\" to previous track")
     }
     
     func seek(to time: TimeInterval) {
         guard let item = currentItem else { return }
         let clampedTime = max(0, min(time, item.duration))
-        self.currentItem = NowPlayingItem(
-            title: item.title,
-            artist: item.artist,
-            album: item.album,
-            duration: item.duration,
-            elapsedTime: clampedTime,
-            isPlaying: item.isPlaying,
-            artworkData: item.artworkData
-        )
         let appName = activeSource == .spotify ? "Spotify" : "Music"
-        Task {
-            await AppleScriptHelper.executeVoid("tell application \"\(appName)\" to set player position to \(clampedTime)")
-        }
+        let posStr = String(format: "%.1f", clampedTime)
+        AppleScriptHelper.executeVoid("tell application \"\(appName)\" to set player position to \(posStr)")
     }
     
     func openMusicApp() {
