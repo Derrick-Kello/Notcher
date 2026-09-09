@@ -53,7 +53,6 @@ struct NotchRootView: View {
         if isExpanded {
             return DisplayGeometry.openNotchSize.width
         } else {
-            return hasActiveMedia ? (display.hoverNotchWidth + 60) : display.hoverNotchWidth
             if display.hasNotch {
                 return hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
             } else {
@@ -83,15 +82,17 @@ struct NotchRootView: View {
                         color: (isExpanded || isHovering) ? Color.black.opacity(0.7) : Color.clear,
                         radius: isExpanded ? 6 : 4
                     )
-                    .contentShape(currentNotchShape)
-                    .onHover { hovering in
-                        handleHover(hovering)
-                    }
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
                     .animation(animationSpring, value: currentNotchWidth)
             }
         }
         .frame(maxWidth: DisplayGeometry.windowSize.width, maxHeight: DisplayGeometry.windowSize.height, alignment: .top)
+        .onReceive(NotificationCenter.default.publisher(for: .notchMouseEntered)) { _ in
+            handleHover(true)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .notchMouseExited)) { _ in
+            handleHover(false)
+        }
     }
     
     @ViewBuilder

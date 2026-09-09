@@ -21,7 +21,6 @@ struct CollapsedNotchView: View {
         let height = display.physicalNotchHeight
         let artSize: CGFloat = max(16, min(24, height - 14))
         let themeColor = configuration.theme.primaryColor(dynamicArtworkColor: mediaProvider.dynamicColor)
-        let notchWidth = display.hoverNotchWidth
         let notchWidth = display.physicalNotchWidth
         
         if display.hasNotch {

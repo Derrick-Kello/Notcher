@@ -6,10 +6,17 @@
 import AppKit
 import SwiftUI
 
+extension Notification.Name {
+    static let notchMouseEntered = Notification.Name("com.smarthivelabs.notcher.mouseEntered")
+    static let notchMouseExited = Notification.Name("com.smarthivelabs.notcher.mouseExited")
+}
+
 @MainActor
 final class NotchHostingView<Content: View>: NSHostingView<Content> {
     private let stateMachine: NotchStateMachine
     private let display: DisplayDescriptor
+    private var isHoveredInsideNotch = false
+    private var trackingAreaRef: NSTrackingArea?
     
     init(rootView: Content, stateMachine: NotchStateMachine, display: DisplayDescriptor) {
         self.stateMachine = stateMachine
@@ -23,6 +30,21 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
     
     @MainActor required dynamic init(rootView: Content) {
         fatalError("init(rootView:) has not been implemented")
+    }
+    
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let old = trackingAreaRef {
+            removeTrackingArea(old)
+        }
+        let area = NSTrackingArea(
+            rect: bounds,
+            options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(area)
+        trackingAreaRef = area
     }
     
     private func currentNotchRect() -> NSRect {
@@ -44,16 +66,8 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
                 height: height
             )
         } else {
-            let mediaProvider = SystemMediaProvider.shared
-            let hasActiveMedia = mediaProvider.isAvailable && mediaProvider.currentItem != nil
-            // Narrowed by 20pt on both sides so it stays strictly inside the physical notch
-            let width: CGFloat = hasActiveMedia ? (display.hoverNotchWidth + 60) : display.hoverNotchWidth
-            let width: CGFloat
-            if display.hasNotch {
-                width = hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
-            } else {
-                width = hasActiveMedia ? 260 : 160
-            }
+            // Strictly the exact physical notch width — never wider when closed
+            let width = display.hasNotch ? display.physicalNotchWidth : 160
             let height = display.physicalNotchHeight
             return NSRect(
                 x: (bounds.width - width) / 2.0,
@@ -64,13 +78,34 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
         }
     }
     
+    override func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        let point = convert(event.locationInWindow, from: nil)
+        let isInside = currentNotchRect().contains(point)
+        
+        if isInside && !isHoveredInsideNotch {
+            isHoveredInsideNotch = true
+            NotificationCenter.default.post(name: .notchMouseEntered, object: nil)
+        } else if !isInside && isHoveredInsideNotch {
+            isHoveredInsideNotch = false
+            NotificationCenter.default.post(name: .notchMouseExited, object: nil)
+        }
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        if isHoveredInsideNotch {
+            isHoveredInsideNotch = false
+            NotificationCenter.default.post(name: .notchMouseExited, object: nil)
+        }
+    }
+    
     override func hitTest(_ point: NSPoint) -> NSView? {
         let rect = currentNotchRect()
         if rect.contains(point) {
             return super.hitTest(point)
         }
-        // Points outside the narrowed notch rect pass directly through to menu bar icons
-        // Points outside the exact visible notch rect pass through to menu bar icons
+        // Points outside the physical notch rect pass through to menu bar icons
         return nil
     }
 }
