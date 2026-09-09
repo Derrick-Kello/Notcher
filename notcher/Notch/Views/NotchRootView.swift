@@ -82,6 +82,10 @@ struct NotchRootView: View {
                         color: (isExpanded || isHovering) ? Color.black.opacity(0.7) : Color.clear,
                         radius: isExpanded ? 6 : 4
                     )
+                    .contentShape(currentNotchShape)
+                    .onHover { hovering in
+                        handleHover(hovering)
+                    }
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
                     .animation(animationSpring, value: currentNotchWidth)
             }

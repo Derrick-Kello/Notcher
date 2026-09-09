@@ -41,11 +41,9 @@ struct CollapsedNotchView: View {
                                 .frame(width: artSize, height: artSize)
                         }
                     }
-                    .frame(width: 30, height: height, alignment: .center)
                     .frame(width: 36, height: height, alignment: .center)
                     
-                    // Center Clearance
-                    // Center Clearance: Perfectly spans physical MacBook hardware notch
+                    // Center Clearance: Spans physical MacBook hardware notch
                     Spacer(minLength: 0)
                         .frame(width: notchWidth)
                     
@@ -54,10 +52,8 @@ struct CollapsedNotchView: View {
                         AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                             .frame(width: 16, height: 11)
                     }
-                    .frame(width: 30, height: height, alignment: .center)
                     .frame(width: 36, height: height, alignment: .center)
                 }
-                .frame(width: notchWidth + 60, height: height)
                 .frame(width: notchWidth + 72, height: height)
             } else {
                 Color.clear
@@ -89,13 +85,10 @@ struct CollapsedNotchView: View {
                     AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                         .frame(width: 16, height: 11)
                 }
-                .padding(.horizontal, 8)
-                .frame(width: 220, height: height)
                 .padding(.horizontal, 10)
                 .frame(width: 260, height: height)
             } else {
                 Color.clear
-                    .frame(width: 130, height: height)
                     .frame(width: 160, height: height)
             }
         }

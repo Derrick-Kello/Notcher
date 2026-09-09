@@ -17,11 +17,14 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
     private let display: DisplayDescriptor
     private var isHoveredInsideNotch = false
     private var trackingAreaRef: NSTrackingArea?
+    private var globalMouseMonitor: Any?
+    private var localMouseMonitor: Any?
     
     init(rootView: Content, stateMachine: NotchStateMachine, display: DisplayDescriptor) {
         self.stateMachine = stateMachine
         self.display = display
         super.init(rootView: rootView)
+        setupMouseMonitors()
     }
     
     @MainActor required dynamic init?(coder: NSCoder) {
@@ -30,6 +33,35 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
     
     @MainActor required dynamic init(rootView: Content) {
         fatalError("init(rootView:) has not been implemented")
+    }
+    
+    private func setupMouseMonitors() {
+        // Global monitor catches mouse movement across all applications
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.checkMousePosition(NSEvent.mouseLocation)
+            }
+        }
+        
+        // Local monitor catches mouse movement when this app is active
+        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved]) { [weak self] event in
+            self?.checkMousePosition(NSEvent.mouseLocation)
+            return event
+        }
+    }
+    
+    private func checkMousePosition(_ screenPoint: NSPoint) {
+        guard let window = self.window else { return }
+        let screenRect = currentNotchScreenRect(for: window)
+        let isInside = screenRect.contains(screenPoint)
+        
+        if isInside && !isHoveredInsideNotch {
+            isHoveredInsideNotch = true
+            NotificationCenter.default.post(name: .notchMouseEntered, object: nil)
+        } else if !isInside && isHoveredInsideNotch {
+            isHoveredInsideNotch = false
+            NotificationCenter.default.post(name: .notchMouseExited, object: nil)
+        }
     }
     
     override func updateTrackingAreas() {
@@ -47,7 +79,7 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
         trackingAreaRef = area
     }
     
-    private func currentNotchRect() -> NSRect {
+    private func currentNotchViewRect() -> NSRect {
         let isExpanded: Bool
         switch stateMachine.state {
         case .expanded, .pinned, .expanding, .temporarilyExpanded:
@@ -56,40 +88,48 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
             isExpanded = false
         }
         
+        let width: CGFloat
+        let height: CGFloat
         if isExpanded {
-            let width = DisplayGeometry.openNotchSize.width
-            let height = DisplayGeometry.openNotchSize.height
-            return NSRect(
-                x: (bounds.width - width) / 2.0,
-                y: bounds.height - height,
-                width: width,
-                height: height
-            )
+            width = DisplayGeometry.openNotchSize.width
+            height = DisplayGeometry.openNotchSize.height
         } else {
-            // Strictly the exact physical notch width — never wider when closed
-            let width = display.hasNotch ? display.physicalNotchWidth : 160
-            let height = display.physicalNotchHeight
-            return NSRect(
-                x: (bounds.width - width) / 2.0,
-                y: bounds.height - height,
-                width: width,
-                height: height
-            )
+            let hasMedia = SystemMediaProvider.shared.isAvailable && SystemMediaProvider.shared.currentItem != nil
+            if display.hasNotch {
+                width = hasMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
+            } else {
+                width = hasMedia ? 260 : 160
+            }
+            height = display.physicalNotchHeight
         }
+        
+        return NSRect(
+            x: (bounds.width - width) / 2.0,
+            y: bounds.height - height,
+            width: width,
+            height: height
+        )
+    }
+    
+    private func currentNotchScreenRect(for window: NSWindow) -> NSRect {
+        let viewRect = currentNotchViewRect()
+        let windowFrame = window.frame
+        return NSRect(
+            x: windowFrame.origin.x + viewRect.origin.x,
+            y: windowFrame.origin.y + viewRect.origin.y,
+            width: viewRect.width,
+            height: viewRect.height
+        )
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
+        checkMousePosition(NSEvent.mouseLocation)
     }
     
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
-        let point = convert(event.locationInWindow, from: nil)
-        let isInside = currentNotchRect().contains(point)
-        
-        if isInside && !isHoveredInsideNotch {
-            isHoveredInsideNotch = true
-            NotificationCenter.default.post(name: .notchMouseEntered, object: nil)
-        } else if !isInside && isHoveredInsideNotch {
-            isHoveredInsideNotch = false
-            NotificationCenter.default.post(name: .notchMouseExited, object: nil)
-        }
+        checkMousePosition(NSEvent.mouseLocation)
     }
     
     override func mouseExited(with event: NSEvent) {
@@ -101,12 +141,21 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {
-        let rect = currentNotchRect()
+        let rect = currentNotchViewRect()
         if rect.contains(point) {
             return super.hitTest(point)
         }
         // Points outside the physical notch rect pass through to menu bar icons
         return nil
+    }
+    
+    deinit {
+        if let monitor = globalMouseMonitor {
+            NSEvent.removeMonitor(monitor)
+        }
+        if let monitor = localMouseMonitor {
+            NSEvent.removeMonitor(monitor)
+        }
     }
 }
 

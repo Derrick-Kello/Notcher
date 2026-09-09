@@ -16,9 +16,9 @@ struct DisplayDescriptor: @unchecked Sendable {
     let physicalNotchWidth: CGFloat
     let physicalNotchHeight: CGFloat
     
-    /// The narrow hover trigger width constrained to well inside the physical notch (-20pt on each side)
+    /// The hover trigger width matches the hardware notch width
     var hoverNotchWidth: CGFloat {
-        hasNotch ? max(100, physicalNotchWidth - 40) : 130
+        hasNotch ? physicalNotchWidth : 160
     }
     
     /// The display's unique identifier
