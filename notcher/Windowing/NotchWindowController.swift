@@ -7,64 +7,6 @@ import AppKit
 import SwiftUI
 
 @MainActor
-final class NotchHostingView<Content: View>: NSHostingView<Content> {
-    private let stateMachine: NotchStateMachine
-    private let display: DisplayDescriptor
-    
-    init(rootView: Content, stateMachine: NotchStateMachine, display: DisplayDescriptor) {
-        self.stateMachine = stateMachine
-        self.display = display
-        super.init(rootView: rootView)
-    }
-    
-    @MainActor required dynamic init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    @MainActor required dynamic init(rootView: Content) {
-        fatalError("init(rootView:) has not been implemented")
-    }
-    
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        let isExpanded: Bool
-        switch stateMachine.state {
-        case .expanded, .pinned, .expanding, .temporarilyExpanded:
-            isExpanded = true
-        default:
-            isExpanded = false
-        }
-        
-        let rect: NSRect
-        if isExpanded {
-            rect = NSRect(
-                x: (bounds.width - DisplayGeometry.openNotchSize.width) / 2.0,
-                y: bounds.height - DisplayGeometry.openNotchSize.height,
-                width: DisplayGeometry.openNotchSize.width,
-                height: DisplayGeometry.openNotchSize.height
-            )
-        } else {
-            let mediaProvider = SystemMediaProvider.shared
-            let hasActiveMedia = mediaProvider.isAvailable && mediaProvider.currentItem != nil
-            let width: CGFloat
-            if display.hasNotch {
-                width = hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
-            } else {
-                width = hasActiveMedia ? 260 : 160
-            }
-            let height = display.physicalNotchHeight
-            rect = NSRect(
-                x: (bounds.width - width) / 2.0,
-                y: bounds.height - height,
-                width: width,
-                height: height
-            )
-        }
-        
-        return rect.contains(point) ? super.hitTest(point) : nil
-    }
-}
-
-@MainActor
 final class NotchWindowController {
     
     private let environment: AppEnvironment
@@ -74,7 +16,22 @@ final class NotchWindowController {
     init(environment: AppEnvironment) {
         self.environment = environment
         setupScreenNotifications()
+        setupStateObservation()
         adjustWindows()
+    }
+    
+    private func setupStateObservation() {
+        // Observe state changes to dynamically resize window bounds
+        _ = withObservationTracking {
+            _ = environment.stateMachine.state
+            _ = SystemMediaProvider.shared.currentItem
+            _ = SystemMediaProvider.shared.isPlaying
+        } onChange: {
+            Task { @MainActor [weak self] in
+                self?.updateWindowFrames()
+                self?.setupStateObservation()
+            }
+        }
     }
     
     private func setupScreenNotifications() {
@@ -131,7 +88,7 @@ final class NotchWindowController {
             if let existing = windows[uuid] {
                 window = existing
             } else {
-                let rect = NSRect(origin: .zero, size: DisplayGeometry.windowSize)
+                let rect = frameForDisplay(display, on: screen)
                 window = NotchPanel(contentRect: rect, screenUUID: uuid)
                 windows[uuid] = window
             }
@@ -141,20 +98,61 @@ final class NotchWindowController {
                 display: display,
                 widgetRegistry: environment.widgetRegistry
             )
-            window.contentView = NotchHostingView(
-                rootView: rootView,
-                stateMachine: environment.stateMachine,
-                display: display
-            )
+            window.contentView = NSHostingView(rootView: rootView)
             
-            // Position at top center of this screen
-            let screenFrame = screen.frame
-            let originX = screenFrame.origin.x + (screenFrame.width - DisplayGeometry.windowSize.width) / 2.0
-            let originY = screenFrame.origin.y + screenFrame.height - DisplayGeometry.windowSize.height
-            window.setFrame(NSRect(x: originX, y: originY, width: DisplayGeometry.windowSize.width, height: DisplayGeometry.windowSize.height), display: true)
-            
+            updateWindowFrame(window, for: display, on: screen)
             window.orderFrontRegardless()
             NotchSpaceManager.shared.notchSpace.windows.insert(window)
+        }
+    }
+    
+    private func updateWindowFrames() {
+        for screen in NSScreen.screens {
+            let uuid = screenUUID(screen)
+            guard let window = windows[uuid] else { continue }
+            let display = DisplayDescriptor.from(screen: screen)
+            updateWindowFrame(window, for: display, on: screen)
+        }
+    }
+    
+    private func isExpanded() -> Bool {
+        switch environment.stateMachine.state {
+        case .expanded, .pinned, .expanding, .temporarilyExpanded:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    private func frameForDisplay(_ display: DisplayDescriptor, on screen: NSScreen) -> NSRect {
+        let screenFrame = screen.frame
+        let mediaProvider = SystemMediaProvider.shared
+        let hasActiveMedia = mediaProvider.isAvailable && mediaProvider.currentItem != nil
+        
+        if isExpanded() {
+            let width = DisplayGeometry.openNotchSize.width
+            let height = DisplayGeometry.openNotchSize.height + DisplayGeometry.shadowPadding
+            let originX = screenFrame.origin.x + (screenFrame.width - width) / 2.0
+            let originY = screenFrame.origin.y + screenFrame.height - height
+            return NSRect(x: originX, y: originY, width: width, height: height)
+        } else {
+            let width: CGFloat
+            if display.hasNotch {
+                width = hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
+            } else {
+                width = hasActiveMedia ? 260 : 160
+            }
+            let height = display.physicalNotchHeight
+            let originX = screenFrame.origin.x + (screenFrame.width - width) / 2.0
+            let originY = screenFrame.origin.y + screenFrame.height - height
+            return NSRect(x: originX, y: originY, width: width, height: height)
+        }
+    }
+    
+    private func updateWindowFrame(_ window: NotchPanel, for display: DisplayDescriptor, on screen: NSScreen) {
+        let targetFrame = frameForDisplay(display, on: screen)
+        if window.frame != targetFrame {
+            window.setFrame(targetFrame, display: true)
         }
     }
     
