@@ -83,14 +83,17 @@ struct NotchRootView: View {
                         radius: isExpanded ? 6 : 4
                     )
                     .contentShape(currentNotchShape)
-                    .onHover { hovering in
-                        handleHover(hovering)
-                    }
                     .animation(isExpanded ? openAnimation : closeAnimation, value: isExpanded)
                     .animation(animationSpring, value: currentNotchWidth)
             }
         }
         .frame(maxWidth: DisplayGeometry.windowSize.width, maxHeight: DisplayGeometry.windowSize.height, alignment: .top)
+        .onReceive(NotificationCenter.default.publisher(for: .notchMouseEntered)) { _ in
+            handleHover(true)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .notchMouseExited)) { _ in
+            handleHover(false)
+        }
     }
     
     @ViewBuilder
@@ -148,7 +151,7 @@ struct NotchRootView: View {
             }
             
             hoverTask = Task {
-                try? await Task.sleep(nanoseconds: 180_000_000)
+                try? await Task.sleep(nanoseconds: 120_000_000)
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
