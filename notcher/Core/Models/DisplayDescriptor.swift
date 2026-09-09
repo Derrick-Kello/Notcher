@@ -2,8 +2,6 @@
 //  DisplayDescriptor.swift
 //  notcher
 //
-//  Created on 2026-09-08.
-//
 
 import AppKit
 
@@ -17,6 +15,11 @@ struct DisplayDescriptor: @unchecked Sendable {
     let hasNotch: Bool
     let physicalNotchWidth: CGFloat
     let physicalNotchHeight: CGFloat
+    
+    /// The narrow hover trigger width constrained to well inside the physical notch (-20pt on each side)
+    var hoverNotchWidth: CGFloat {
+        hasNotch ? max(100, physicalNotchWidth - 40) : 130
+    }
     
     /// The display's unique identifier
     var displayID: CGDirectDisplayID? {
@@ -38,7 +41,6 @@ struct DisplayDescriptor: @unchecked Sendable {
             safeArea = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         }
         
-        // A screen has a notch if the top safe area inset is significantly larger than zero
         let hasNotch = safeArea.top > 0
         
         var notchWidth: CGFloat = 185

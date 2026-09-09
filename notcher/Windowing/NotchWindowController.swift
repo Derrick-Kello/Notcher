@@ -46,12 +46,8 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
         } else {
             let mediaProvider = SystemMediaProvider.shared
             let hasActiveMedia = mediaProvider.isAvailable && mediaProvider.currentItem != nil
-            let width: CGFloat
-            if display.hasNotch {
-                width = hasActiveMedia ? (display.physicalNotchWidth + 72) : display.physicalNotchWidth
-            } else {
-                width = hasActiveMedia ? 260 : 160
-            }
+            // Narrowed by 20pt on both sides so it stays strictly inside the physical notch
+            let width: CGFloat = hasActiveMedia ? (display.hoverNotchWidth + 60) : display.hoverNotchWidth
             let height = display.physicalNotchHeight
             return NSRect(
                 x: (bounds.width - width) / 2.0,
@@ -67,7 +63,7 @@ final class NotchHostingView<Content: View>: NSHostingView<Content> {
         if rect.contains(point) {
             return super.hitTest(point)
         }
-        // Points outside the visible notch rect pass directly through to menu bar / desktop
+        // Points outside the narrowed notch rect pass directly through to menu bar icons
         return nil
     }
 }

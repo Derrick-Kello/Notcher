@@ -21,6 +21,7 @@ struct CollapsedNotchView: View {
         let height = display.physicalNotchHeight
         let artSize: CGFloat = max(16, min(24, height - 14))
         let themeColor = configuration.theme.primaryColor(dynamicArtworkColor: mediaProvider.dynamicColor)
+        let notchWidth = display.hoverNotchWidth
         
         if display.hasNotch {
             if hasActiveMedia {
@@ -40,23 +41,23 @@ struct CollapsedNotchView: View {
                                 .frame(width: artSize, height: artSize)
                         }
                     }
-                    .frame(width: 36, height: height, alignment: .center)
+                    .frame(width: 30, height: height, alignment: .center)
                     
-                    // Center Clearance: Perfectly matches physical MacBook hardware notch
+                    // Center Clearance
                     Spacer(minLength: 0)
-                        .frame(width: display.physicalNotchWidth)
+                        .frame(width: notchWidth)
                     
                     // Right Ear: Animated Audio Spectrum Equalizer Bars
                     HStack {
                         AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                             .frame(width: 16, height: 11)
                     }
-                    .frame(width: 36, height: height, alignment: .center)
+                    .frame(width: 30, height: height, alignment: .center)
                 }
-                .frame(width: display.physicalNotchWidth + 72, height: height)
+                .frame(width: notchWidth + 60, height: height)
             } else {
                 Color.clear
-                    .frame(width: display.physicalNotchWidth, height: height)
+                    .frame(width: notchWidth, height: height)
             }
         } else {
             // External monitor without hardware notch
@@ -67,7 +68,7 @@ struct CollapsedNotchView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: artSize, height: artSize)
-                            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: 4.5, style: .continuous))
                     } else {
                         Image(systemName: "music.note")
                             .font(.system(size: 10, weight: .bold))
@@ -79,25 +80,16 @@ struct CollapsedNotchView: View {
                         .foregroundColor(.white)
                         .lineLimit(1)
                     
-                    Text("•")
-                        .font(.system(size: 8))
-                        .foregroundColor(.white.opacity(0.4))
-                    
-                    Text(item.artist)
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(.white.opacity(0.7))
-                        .lineLimit(1)
-                    
                     Spacer(minLength: 4)
                     
                     AudioSpectrumView(isPlaying: mediaProvider.isPlaying, color: themeColor)
                         .frame(width: 16, height: 11)
                 }
-                .padding(.horizontal, 10)
-                .frame(width: 260, height: height)
+                .padding(.horizontal, 8)
+                .frame(width: 220, height: height)
             } else {
                 Color.clear
-                    .frame(width: 160, height: height)
+                    .frame(width: 130, height: height)
             }
         }
     }
